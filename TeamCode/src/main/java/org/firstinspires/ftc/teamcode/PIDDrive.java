@@ -1,41 +1,30 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name="Go Forward", group="auto")
+@Autonomous(name="PID Drive", group="auto")
 
-public class GoForward extends LinearOpMode {
+public class PIDDrive extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
 
+    NavigationHelper navigate = new NavigationHelper();
+    BNO055IMU imu;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         initialize();
         waitForStart();
+        navigate.forwardDrive(100,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
 
-        frontLeft.setPower(0.5);
-        frontRight.setPower(0.5);
-        backLeft.setPower(0.5);
-        backRight.setPower(0.5);
-
-        try{
-            Thread.sleep(5000);
-        }
-        catch(Exception e){
-
-        }
-
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
 
     }
 
@@ -44,9 +33,10 @@ public class GoForward extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+        imu = hardwareMap.get(BNO055IMU.class,"imu");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 }

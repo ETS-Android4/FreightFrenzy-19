@@ -47,42 +47,16 @@ public class NavigationHelper {
 
 
     // This is the method that gets called if constant is STRAIGHT
-    private void forwardDrive (double pTgtDistance, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, Telemetry telemetry, BNO055IMU pImu, boolean isForward) {
-        /*if(pSpeed<0){
-            pFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }else if(pSpeed>=0){
-            pFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }*/
-        /*if(!isForward){
-            pFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }else if(isForward){
-            pFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            pBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }*/
+    public void forwardDrive (double pTgtDistance, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, Telemetry telemetry, BNO055IMU pImu, boolean isForward) {
 
-        //left = float
-        //right = brake
-
-        //pFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //pBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         ElapsedTime runtime = new ElapsedTime();
 
-        PIDController pidDrive = new PIDController(0.05, 0.01, 0.01);
+        PIDController pidDrive = new PIDController(1, 1, 1);
+        // 0.05, 0.01, 0.01
         lastAngles = new Orientation();
 
         //Variables used for converting inches to Encoder dounts
@@ -135,6 +109,16 @@ public class NavigationHelper {
         pidDrive.enable();
         double correction;
 
+        telemetry.addData("imu heading: ", "entering loop");
+        telemetry.update();
+        try{
+            Thread.sleep(1000);
+        }
+        catch(Exception e){
+
+        }
+
+
         //This while loop will keep the motors running to the target position until one of the motors have reached the final encoder count
         while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy())) {
             //set to 0 NO PID
@@ -143,6 +127,9 @@ public class NavigationHelper {
             pBackRight.setPower(pSpeed + correction);
             pFrontLeft.setPower(pSpeed - correction);
             pBackLeft.setPower(pSpeed - correction);
+
+            telemetry.addData("imu heading: ", getAngle(pImu));
+            telemetry.update();
         }
 
         //stop motors
