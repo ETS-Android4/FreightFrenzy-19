@@ -48,6 +48,12 @@ public class NavigationHelper {
 
     // This is the method that gets called if constant is STRAIGHT
     public void forwardDrive (double pTgtDistance, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, Telemetry telemetry, BNO055IMU pImu, boolean isForward) {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        pImu.initialize(parameters);
 
         pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -55,9 +61,8 @@ public class NavigationHelper {
 
         ElapsedTime runtime = new ElapsedTime();
 
-        PIDController pidDrive = new PIDController(1, 1, 1);
+        PIDController pidDrive = new PIDController(0.05, 0.01, 0.01);
         // 0.05, 0.01, 0.01
-        lastAngles = new Orientation();
 
         //Variables used for converting inches to Encoder dounts
         final double COUNTS_PER_MOTOR_DCMOTOR = 1120;    // eg: TETRIX Motor Encoder
@@ -109,18 +114,19 @@ public class NavigationHelper {
         pidDrive.enable();
         double correction;
 
-        telemetry.addData("imu heading: ", "entering loop");
+        telemetry.addLine("entering loop");
         telemetry.update();
-        try{
-            Thread.sleep(1000);
-        }
-        catch(Exception e){
+
+        try {
+            Thread.sleep(250);
+        } catch(InterruptedException E){
 
         }
 
+        lastAngles = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         //This while loop will keep the motors running to the target position until one of the motors have reached the final encoder count
-        while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy())) {
+        while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy()) ) {
             //set to 0 NO PID
             correction = pidDrive.performPID(getAngle(pImu))/2;
             pFrontRight.setPower(pSpeed + correction);
@@ -128,8 +134,16 @@ public class NavigationHelper {
             pFrontLeft.setPower(pSpeed - correction);
             pBackLeft.setPower(pSpeed - correction);
 
-            telemetry.addData("imu heading: ", getAngle(pImu));
+            telemetry.addData("imu first angle: ", pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("imu last angle: ", lastAngles.firstAngle);
+            telemetry.addData("imu header angle: ", getAngle(pImu));
             telemetry.update();
+
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException E){
+
+            }
         }
 
         //stop motors
@@ -155,6 +169,7 @@ public class NavigationHelper {
 
         Orientation angles = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
 
         if (deltaAngle < -180)
@@ -162,11 +177,13 @@ public class NavigationHelper {
         else if (deltaAngle > 180)
             deltaAngle -= 360;
 
-        globalAngle += deltaAngle;
 
-        lastAngles = angles;
+        //globalAngle += deltaAngle
+        //globalAngle += deltaAngle;
 
-        return globalAngle;
+//        lastAngles = angles;
+
+        return deltaAngle;
     }
 
 

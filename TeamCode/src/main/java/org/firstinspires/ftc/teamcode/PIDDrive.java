@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 @Autonomous(name="PID Drive", group="auto")
 
 public class PIDDrive extends LinearOpMode {
@@ -23,6 +27,14 @@ public class PIDDrive extends LinearOpMode {
 
         initialize();
         waitForStart();
+        telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        telemetry.update();
+
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException E){
+
+        }
         navigate.forwardDrive(100,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
 
 
@@ -33,7 +45,14 @@ public class PIDDrive extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
         imu = hardwareMap.get(BNO055IMU.class,"imu");
+        imu.initialize(parameters);
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
