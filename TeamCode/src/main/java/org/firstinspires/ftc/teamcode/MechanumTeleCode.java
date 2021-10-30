@@ -20,9 +20,9 @@ public class MechanumTeleCode extends LinearOpMode {
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
 
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
@@ -66,7 +66,7 @@ public class MechanumTeleCode extends LinearOpMode {
         initialize();
         waitForStart();
         while(opModeIsActive()){
-            mecanumDrive(0.6);
+            mecanumDrive(1);
             idle();
         }
     }
