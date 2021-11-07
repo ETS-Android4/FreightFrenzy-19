@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@Autonomous(name="PID Drive", group="auto")
+@Autonomous(name="AUTO RED NEAR", group="auto")
 
-public class PIDDrive extends LinearOpMode {
+public class AutoRedNear extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
@@ -27,15 +27,35 @@ public class PIDDrive extends LinearOpMode {
 
         initialize();
         waitForStart();
+
         telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         telemetry.update();
 
+        navigate.forwardDrive(-20,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch(InterruptedException E){
 
         }
-        navigate.forwardDrive(80,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+        navigate.navigate(15, Constants2020.Direction.RIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,false);
+        try {
+            Thread.sleep(500);
+        } catch(InterruptedException E){
+
+        }
+        navigate.forwardDrive(10,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+        try {
+            Thread.sleep(500);
+        } catch(InterruptedException E){
+
+        }
+        navigate.navigate(0, Constants2020.Direction.TURN,90,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,true);
+        try {
+            Thread.sleep(500);
+        } catch(InterruptedException E){
+
+        }
+        navigate.forwardDrive(-40,0.7,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
 
 
     }
