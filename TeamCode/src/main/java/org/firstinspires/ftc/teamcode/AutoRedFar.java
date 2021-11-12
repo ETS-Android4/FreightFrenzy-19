@@ -10,15 +10,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@Autonomous(name="AUTO RED NEAR", group="auto")
+@Autonomous(name="AUTO RED FAR", group="auto")
 
-public class AutoRedNear extends LinearOpMode {
+public class AutoRedFar extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
-    float header;
 
     NavigationHelper navigate = new NavigationHelper();
     BNO055IMU imu;
@@ -31,33 +30,35 @@ public class AutoRedNear extends LinearOpMode {
 
         telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         telemetry.update();
-        header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+
+        float header =imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                 AngleUnit.DEGREES).firstAngle;
-        navigate.forwardDrive(18,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+
+        navigate.forwardDrive(-20,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
         try {
             Thread.sleep(500);
         } catch(InterruptedException E){
 
         }
-        navigate.navigate(15, Constants2020.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+        navigate.navigate(15, Constants2020.Direction.RIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header,false);
         try {
-            Thread.sleep(250);
+            Thread.sleep(500);
         } catch(InterruptedException E){
 
         }
-        navigate.forwardDrive(-10,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+        navigate.forwardDrive(10,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
         try {
-            Thread.sleep(250);
+            Thread.sleep(500);
         } catch(InterruptedException E){
 
         }
-        navigate.navigate(0, Constants2020.Direction.TURN,90,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+        navigate.navigate(0, Constants2020.Direction.TURN,90,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header,true);
         try {
-            Thread.sleep(250);
+            Thread.sleep(500);
         } catch(InterruptedException E){
 
         }
-        navigate.forwardDrive(40,0.7,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+        navigate.forwardDrive(-40,0.7,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
 
 
     }
@@ -76,10 +77,10 @@ public class AutoRedNear extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class,"imu");
         imu.initialize(parameters);
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
 }

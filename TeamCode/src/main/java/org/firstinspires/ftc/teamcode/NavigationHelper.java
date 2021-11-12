@@ -23,7 +23,7 @@ public class NavigationHelper {
     //LinearOpMode opm = new LinearOpMode() {
 
     // This method tells us - Based on the direction we want to move(STRAIGHT,LEFT,RIGHT,TURN), it will call the needed method with parameters
-    public void navigate (double pTgtDistance, Constants2020.Direction pDirection, double pRotation, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, BNO055IMU pImu, Telemetry telemetry, boolean isForward ){
+    public void navigate (double pTgtDistance, Constants2020.Direction pDirection, double pRotation, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, BNO055IMU pImu, Telemetry telemetry, float header, boolean isForward ){
 
         if(pDirection.equals(Constants2020.Direction.STRAIGHT)){
             forwardDrive(pTgtDistance, pSpeed, pBackLeft, pBackRight, pFrontRight, pFrontLeft, telemetry, pImu, isForward );
@@ -37,8 +37,9 @@ public class NavigationHelper {
             rightStrafe(pTgtDistance, pSpeed, pBackLeft, pBackRight, pFrontRight, pFrontLeft, pImu, telemetry);
         }
 
+
         else if(pDirection.equals(Constants2020.Direction.TURN)){
-            this.turnWithEncodersWithCorrection(pFrontRight, pFrontLeft, pBackRight, pBackLeft, pRotation, pSpeed, pImu, telemetry);
+            this.turnWithEncodersWithCorrection(pFrontRight, pFrontLeft, pBackRight, pBackLeft, pRotation, pSpeed, pImu, header, telemetry);
         }
 
     }
@@ -407,12 +408,88 @@ public class NavigationHelper {
     }
 
     private void turnWithEncodersWithCorrection(DcMotor pFrontRight, DcMotor pFrontLeft, DcMotor pBackRight,
-                                                DcMotor pBackLeft, double pRotation, double pSpeed, BNO055IMU pImu, Telemetry pTelemetry) {
+                                                DcMotor pBackLeft, double pRotation, double pSpeed, BNO055IMU pImu, float header,Telemetry pTelemetry) {
+
+
+        pBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        float currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                AngleUnit.DEGREES).firstAngle;
+
+        //double goalAngle = currAngle + pRotation;
+
+        double tempAngle = pRotation+currAngle;
+        double goalAngle = tempAngle + 180;
+
+
+        //-219
+        pTelemetry.addData("Goal Angle: ",goalAngle);
+        //-129
+        pTelemetry.addData("Current Angle: ",currAngle);
+        pTelemetry.update();
+        try {
+            Thread.sleep(2000);
+        } catch(InterruptedException E){
+
+        }
+
+        if(pRotation>0){
+            while(Math.abs(currAngle-goalAngle)>2){
+                pFrontRight.setPower(-pSpeed);
+                pBackRight.setPower(-pSpeed);
+                pFrontLeft.setPower(pSpeed);
+                pBackLeft.setPower(pSpeed);
+
+                currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                        AngleUnit.DEGREES).firstAngle;
+
+            }
+        }
+        else{
+            while(currAngle>=goalAngle){
+                pFrontRight.setPower(pSpeed);
+                pBackRight.setPower(pSpeed);
+                pFrontLeft.setPower(-pSpeed);
+                pBackLeft.setPower(-pSpeed);
+                currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                        AngleUnit.DEGREES).firstAngle;
+
+                pTelemetry.addData("Goal Angle: ",goalAngle);
+                //-129
+                pTelemetry.addData("Current Angle: ",currAngle);
+                pTelemetry.update();
+                try {
+                    Thread.sleep(2000);
+                } catch(InterruptedException E){
+
+                }
+            }
+
+        }
+        pFrontRight.setPower(0);
+        pBackRight.setPower(0);
+        pFrontLeft.setPower(0);
+        pBackLeft.setPower(0);
+        pTelemetry.addData("Final Angle: ",currAngle);
+        pTelemetry.update();
+        try {
+            Thread.sleep(2000);
+        } catch(InterruptedException E){
+
+        }
+
+        /*float correction = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                AngleUnit.DEGREES).firstAngle - header;
+
         turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, pRotation,pSpeed,pImu,pTelemetry);
         double currentAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                 AngleUnit.DEGREES).firstAngle;
-        /*
-        if(Math.abs(correction)>=10){
+
+         */
+
+        /*if(Math.abs(correction)>=10){
             pTelemetry.addData("Correction value: ",correction);
             pTelemetry.update();
             try {
@@ -421,7 +498,7 @@ public class NavigationHelper {
                 e.printStackTrace();
             }
             turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, correction,0.35,pImu,pTelemetry);
-        }
-         */
+        }*/
+
     }
 }
