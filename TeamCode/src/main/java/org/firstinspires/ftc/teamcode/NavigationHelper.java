@@ -420,9 +420,16 @@ public class NavigationHelper {
 
         //double goalAngle = currAngle + pRotation;
 
-        double tempAngle = pRotation+currAngle;
-        double goalAngle = tempAngle + 180;
+        double goalAngle;
 
+        if(currAngle<-180){
+            double tempAngle = pRotation+currAngle;
+             goalAngle = tempAngle + 180;
+        }
+        else{
+             goalAngle = currAngle - pRotation;
+
+        }
 
         //-219
         pTelemetry.addData("Goal Angle: ",goalAngle);

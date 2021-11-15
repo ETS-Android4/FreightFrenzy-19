@@ -11,17 +11,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@Autonomous(name="AUTO RED FAR", group="auto")
+@Autonomous(name="AUTO BLUE FAR", group="auto")
 
-public class AutoRedFar extends LinearOpMode {
+public class AutoBlueFar extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
+
     DcMotor intake;
     DcMotor carousel;
     Servo dumperServo;
+
 
     final double dumperDump = 0.35;
     final double dumperGoingUp = 0.65;
@@ -37,25 +39,32 @@ public class AutoRedFar extends LinearOpMode {
 
         initialize();
         waitForStart();
+
+        telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        telemetry.update();
+
+        float header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                AngleUnit.DEGREES).firstAngle;
+
         if(opModeIsActive()){
-            telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.update();
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException E) {
 
-            float header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                    AngleUnit.DEGREES).firstAngle;
-
-            navigate.forwardDrive(20, 0.5, backLeft, backRight, frontRight, frontLeft, telemetry, imu, true);
+            }
+            navigate.forwardDrive(16, 0.5, backLeft, backRight, frontRight, frontLeft, telemetry, imu, true);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException E) {
 
             }
-            navigate.navigate(25, Constants2020.Direction.RIGHT, 0, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
+            navigate.navigate(25, Constants2020.Direction.LEFT, 0, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException E) {
 
             }
+
             dumperServo.setPosition(dumperFirstLevel);
             try {
                 Thread.sleep(500);
@@ -69,13 +78,14 @@ public class AutoRedFar extends LinearOpMode {
 
             }
             intake.setPower(0);
-            navigate.navigate(45, Constants2020.Direction.LEFT, 0, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
+            navigate.navigate(60, Constants2020.Direction.RIGHT, 0, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException E) {
 
             }
-            navigate.forwardDrive(2, 0.5, backLeft, backRight, frontRight, frontLeft, telemetry, imu, true);
+            navigate.forwardDrive(13, 0.5, backLeft, backRight, frontRight, frontLeft, telemetry, imu, true);
             try {
                 Thread.sleep(500);
             } catch (InterruptedException E) {
@@ -92,6 +102,7 @@ public class AutoRedFar extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
 
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");

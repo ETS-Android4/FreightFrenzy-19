@@ -15,9 +15,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="AUTO RED NEAR", group="auto")
+@Autonomous(name="AUTO BLUE NEAR", group="auto")
 
-public class AutoRedNear extends LinearOpMode {
+public class AutoBlueNear extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
@@ -70,15 +70,13 @@ public class AutoRedNear extends LinearOpMode {
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
-
-
-            navigate.forwardDrive(16,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+            navigate.forwardDrive(17,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
             try {
                 Thread.sleep(500);
             } catch(InterruptedException E){
 
             }
-            navigate.navigate(18, Constants2020.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+            navigate.navigate(18, Constants2020.Direction.RIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
             try {
                 Thread.sleep(250);
             } catch(InterruptedException E){
@@ -105,7 +103,7 @@ public class AutoRedNear extends LinearOpMode {
             } catch(InterruptedException E){
 
             }
-            navigate.forwardDrive(58,0.85,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+            navigate.forwardDrive(-62,-0.85,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
 
         }
 
