@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,9 +16,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="AUTO RED NEAR test v1", group="auto")
+@Autonomous(name="AUTO RED FAR test v1", group="auto")
 
-public class AutoRedNearUpdated extends LinearOpMode {
+public class AutoRedFarUpdated extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
@@ -37,6 +38,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
     DetectionHelper pipeline;
     NavigationHelper navigate = new NavigationHelper();
     BNO055IMU imu;
+    //ElapsedTime spintime;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,7 +67,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
 
         waitForStart();
 
-        if(opModeIsActive()){
+        if (opModeIsActive()){
             telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
@@ -109,9 +111,29 @@ public class AutoRedNearUpdated extends LinearOpMode {
 
         */
         //updated code
-            navigate.navigate(-36, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(-32, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
             navigate.navigate(0, Constants2020.Direction.TURN, 90, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
             navigate.navigate(22, Constants2020.Direction.STRAIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //15
+            navigate.navigate(36, Constants2020.Direction.LEFT, 0, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
+
+         //   spintime.startTime();
+
+       /*     //turn on carousel
+            if (spintime.seconds() > 5){
+                carousel.setPower(0);
+            }
+
+            else {
+                carousel.setPower(-0.25);
+            }
+
+a
+        */
+            navigate.navigate(15, Constants2020.Direction.RIGHT, 0, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
 
         }
 
@@ -181,6 +203,8 @@ public class AutoRedNearUpdated extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+    //    spintime.reset();
     }
 
 }

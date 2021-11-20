@@ -2,21 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.PIDController;
-import org.firstinspires.ftc.teamcode.Constants2020;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.android.dx.rop.code.ConservativeTranslationAdvice;
 
-import static java.lang.Thread.sleep;
-
-public class NavigationHelper {
+public class NavigationHelperOpMode extends OpMode {
 
     Orientation lastAngles = new Orientation();
     double globalAngle;
@@ -505,6 +501,16 @@ public class NavigationHelper {
             }
             turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, correction,0.35,pImu,pTelemetry);
         }*/
+
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void loop() {
 
     }
 }
