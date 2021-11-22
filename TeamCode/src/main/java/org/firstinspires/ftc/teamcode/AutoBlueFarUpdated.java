@@ -9,14 +9,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.HashMap;
+@Autonomous(name="AUTO BLUE FAR test v1", group="auto")
 
-@Autonomous(name="AUTO ALL", group="auto")
-public class AutoAll extends LinearOpMode {
+public class AutoBlueFarUpdated extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
@@ -38,28 +40,16 @@ public class AutoAll extends LinearOpMode {
     ElapsedTime spinTime = new ElapsedTime();
     BNO055IMU imu;
 
-    boolean completeConfig = false;
-    boolean red = false;
-    boolean blue = false;
-    boolean near = false;
-    boolean far = false;
-
-    DetectionHelper.DuckPosition position = DetectionHelper.DuckPosition.RIGHT;
-
     @Override
     public void runOpMode() throws InterruptedException {
+
         initialize();
 
-        waitForStart();
-        while(opModeIsActive()){
-            Path();
-            break;
-        }
-    }
-
-    public void Detection(){
+        DetectionHelper.DuckPosition position = DetectionHelper.DuckPosition.RIGHT;
         while(!opModeIsActive()) {
+
             telemetry.addData("Analysis", pipeline.getAnalysis());
+
             position = pipeline.getPosition();
             if(position== DetectionHelper.DuckPosition.LEFT){
                 telemetry.addData("Position", "LEFT");
@@ -74,55 +64,52 @@ public class AutoAll extends LinearOpMode {
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
         }
+
+        waitForStart();
+
+        while (opModeIsActive()){
+            telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.update();
+            header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                    AngleUnit.DEGREES).firstAngle;
+            // Blue Far Code
+
+            //go forward (backward) a bit
+            navigate.navigate(-8, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //strafe left, because backwards
+            navigate.navigate(22, Constants2020.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //carousel
+
+            spinTime.reset();
+            while(spinTime.seconds()<5) {
+                carousel.setPower(-0.25);
+
+            }
+
+            carousel.setPower(0);
+
+            //go backward
+            navigate.navigate(-32, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //turn counterclockwise 90 degrees
+            navigate.navigate(0, Constants2020.Direction.TURN,-90,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //go backward
+            navigate.navigate(-22, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //strafe right
+            navigate.navigate(28, Constants2020.Direction.RIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //go forward - park
+            navigate.navigate(22, Constants2020.Direction.STRAIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+        }
+
     }
 
     public void initialize(){
-
-        while(!completeConfig){
-            if(gamepad1.x){
-                if(!red){
-                    red = true;
-                }
-                else if(red){
-                    red = false;
-                }
-                telemetry.addData("RED", red);
-                telemetry.update();
-            }
-            if(gamepad1.b){
-                if(!blue){
-                    blue = true;
-                }
-                else if(blue){
-                    blue = false;
-                }
-                telemetry.addData("BLUE", blue);
-                telemetry.update();
-            }
-            if(gamepad1.dpad_up){
-                if(!near){
-                    near = true;
-                }
-                else if(near){
-                    near = false;
-                }
-                telemetry.addData("NEAR", near);
-                telemetry.update();
-            }
-            if(gamepad1.dpad_down){
-                if(!far){
-                    far = true;
-                }
-                else if(far){
-                    far = false;
-                }
-                telemetry.addData("FAR", red);
-                telemetry.update();
-            }
-            if(gamepad1.y){
-                completeConfig = true;
-            }
-        }
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -131,8 +118,9 @@ public class AutoAll extends LinearOpMode {
         parameters.mode = BNO055IMU.SensorMode.IMU;
         imu = hardwareMap.get(BNO055IMU.class,"imu");
         imu.initialize(parameters);
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+
         try {
             webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
             pipeline = new DetectionHelper();
@@ -147,6 +135,9 @@ public class AutoAll extends LinearOpMode {
                 @Override
                 public void onError(int errorCode)
                 {
+                    /*
+                     * This will be called if the camera could not be opened
+                     */
                 }
             });
 
@@ -160,6 +151,13 @@ public class AutoAll extends LinearOpMode {
                 e.printStackTrace();
             }
         }
+        telemetry.addLine("FINISHED INITIALIZING WEBCAM");
+        telemetry.update();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -168,25 +166,25 @@ public class AutoAll extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
+        dumperServo.setPosition(dumperGoingUp);
+
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        dumperServo.setPosition(dumperGoingUp);
 
-    }
-
-    public void Path(){
-
-    }
-
-    public void Carousel(){
-
-    }
-
-    public void Placing(){
-
+    //    spintime.reset();
     }
 
 }
+
+
+
+
+
+
+
+
+
+

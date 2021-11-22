@@ -451,6 +451,10 @@ public class NavigationHelper {
                 currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                         AngleUnit.DEGREES).firstAngle;
 
+                pTelemetry.addData("Goal Angle: ",goalAngle);
+                //-129
+                pTelemetry.addData("Current Angle: ",currAngle);
+                pTelemetry.update();
             }
         }
         else{
