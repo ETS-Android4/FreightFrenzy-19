@@ -72,6 +72,8 @@ public class AutoRedFarUpdated extends LinearOpMode {
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
+          /*
+
             navigate.navigate(-32, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
             navigate.navigate(0, Constants2020.Direction.TURN, 90, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
             navigate.navigate(22, Constants2020.Direction.STRAIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
@@ -83,6 +85,43 @@ public class AutoRedFarUpdated extends LinearOpMode {
             carousel.setPower(0);
             navigate.navigate(15, Constants2020.Direction.RIGHT, 0, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
             break;
+
+
+           */
+
+            // Blue Far Code
+
+            //go forward (backward) a bit
+            navigate.navigate(-8, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //strafe left, because backwards
+            navigate.navigate(22, Constants2020.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //carousel
+
+            spinTime.reset();
+            while(spinTime.seconds()<5) {
+                carousel.setPower(-0.25);
+
+            }
+
+            carousel.setPower(0);
+
+            //go backward
+            navigate.navigate(-32, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //turn counterclockwise 90 degrees
+            navigate.navigate(0, Constants2020.Direction.TURN,-90,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //go backward
+            navigate.navigate(-22, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //strafe right
+            navigate.navigate(28, Constants2020.Direction.RIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
+            //go forward - park
+            navigate.navigate(-22, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+
         }
 
     }
