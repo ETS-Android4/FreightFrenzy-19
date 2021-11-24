@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.PIDController;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.robotcore.internal.android.dx.rop.code.Conservative
 
 import static java.lang.Thread.sleep;
 
-public class NavigationHelper {
+public class NavigationTester {
 
     Orientation lastAngles = new Orientation();
     double globalAngle;
@@ -39,7 +40,7 @@ public class NavigationHelper {
 
 
         else if(pDirection.equals(Constants2020.Direction.TURN)){
-            turnTest(pFrontRight, pFrontLeft, pBackRight, pBackLeft, pRotation, pSpeed, pImu, header, telemetry);
+            this.turnWithEncodersWithCorrection(pFrontRight, pFrontLeft, pBackRight, pBackLeft, pRotation, pSpeed, pImu, header, telemetry);
         }
 
     }
@@ -190,6 +191,7 @@ public class NavigationHelper {
 
     private void leftStrafe(double pTgtDistance, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft,  BNO055IMU pImu, Telemetry telemetry) {
         ElapsedTime runtime = new ElapsedTime();
+        PIDController pidDrive = new PIDController(0.05, 0.01, 0.01);
 
         final double COUNTS_PER_MOTOR_DCMOTOR = 1120;    // eg: TETRIX Motor Encoder
         final double DRIVE_GEAR_REDUCTION = 0.5;     // This is < 1.0 if geared UP
@@ -228,20 +230,29 @@ public class NavigationHelper {
         pBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy()) ) {
+            //set to 0 NO PID
+            double correction = pidDrive.performPID(getAngle(pImu))/2;
+            pFrontRight.setPower(pSpeed + correction);
+            pBackRight.setPower(-pSpeed + correction);
+            pFrontLeft.setPower(-pSpeed - correction);
+            pBackLeft.setPower(pSpeed - correction);
 
-        pFrontRight.setPower((pSpeed));
-        pBackRight.setPower(-(pSpeed));
-        pFrontLeft.setPower(-(pSpeed));
-        pBackLeft.setPower((pSpeed));
+            telemetry.addData("imu first angle: ", pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("imu last angle: ", lastAngles.firstAngle);
+            telemetry.addData("imu header angle: ", getAngle(pImu));
+            telemetry.update();
+
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException E){
+
+            }
+        }
+
 
         telemetry.addData("Path1", "Target Position %7d :%7d", newTargetPositionBackLeft, newTargetPositionBackRight, newTargetPositionFrontLeft, newTargetPositionFrontRight);
-
         telemetry.update();
-
-        while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy())) {
-            // Display it for the driver.
-            //potentially put an "if stop pressed: exit while loop because 'stop' is depricated
-        }
 
         //stop motors
         pFrontLeft.setPower(0);
@@ -256,7 +267,8 @@ public class NavigationHelper {
                 pFrontRight.getCurrentPosition());
         telemetry.update();
 
-        //this.strafeCorrection(pBackLeft, pBackRight, pFrontRight, pFrontLeft, pImu, telemetry, startingAngle);
+        this.strafeCorrection(pBackLeft, pBackRight, pFrontRight, pFrontLeft, pImu, telemetry, startingAngle);
+
     }
 
     private void strafeCorrection (DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft,  BNO055IMU pImu, Telemetry pTelemetry, double pStartAngle) {
@@ -268,7 +280,7 @@ public class NavigationHelper {
         if(Math.abs(correction)>5){
             pTelemetry.addData("Correction value: ",correction);
             pTelemetry.update();
-            turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, correction,0.15,pImu,pTelemetry);
+            turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, correction,0.3,pImu,pTelemetry);
 
         }
 
@@ -276,6 +288,7 @@ public class NavigationHelper {
 
     private void rightStrafe(double pTgtDistance, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft,  BNO055IMU pImu, Telemetry telemetry) {
         ElapsedTime runtime = new ElapsedTime();
+        PIDController pidDrive = new PIDController(0.05, 0.01, 0.01);
 
         final double COUNTS_PER_MOTOR_DCMOTOR = 1120;    // eg: TETRIX Motor Encoder
         final double DRIVE_GEAR_REDUCTION = 0.5;     // This is < 1.0 if geared UP
@@ -314,26 +327,29 @@ public class NavigationHelper {
         pBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy()) ) {
+            //set to 0 NO PID
+            double correction = pidDrive.performPID(getAngle(pImu))/2;
+            pFrontRight.setPower(-pSpeed + correction);
+            pBackRight.setPower(pSpeed + correction);
+            pFrontLeft.setPower(pSpeed - correction);
+            pBackLeft.setPower(-pSpeed - correction);
 
-        pFrontRight.setPower(-(pSpeed));
-        pBackRight.setPower((pSpeed));
-        pFrontLeft.setPower((pSpeed));
-        pBackLeft.setPower(-(pSpeed));
+            telemetry.addData("imu first angle: ", pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("imu last angle: ", lastAngles.firstAngle);
+            telemetry.addData("imu header angle: ", getAngle(pImu));
+            telemetry.update();
+
+            try {
+                Thread.sleep(100);
+            } catch(InterruptedException E){
+
+            }
+        }
+
 
         telemetry.addData("Path1", "Target Position %7d :%7d", newTargetPositionBackLeft, newTargetPositionBackRight, newTargetPositionFrontLeft, newTargetPositionFrontRight);
         telemetry.update();
-
-        while ((pBackLeft.isBusy() && pBackRight.isBusy() && pFrontLeft.isBusy() && pFrontRight.isBusy())) {
-
-            // Display it for the driver.
-            /*telemetry.addData("Path1", "Running to %7d :%7d", newTargetPositionBackLeft, newTargetPositionBackRight, newTargetPositionFrontLeft, newTargetPositionFrontRight);
-            telemetry.addData("Path2", "Running at %7d :%7d",
-                    pBackLeft.getCurrentPosition(),
-                    pBackRight.getCurrentPosition(),
-                    pFrontLeft.getCurrentPosition(),
-                    pFrontRight.getCurrentPosition());
-            telemetry.update();*/
-        }
 
         //stop motors
         pFrontLeft.setPower(0);
@@ -407,50 +423,6 @@ public class NavigationHelper {
         pTelemetry.update();
     }
 
-    private void turnTest(DcMotor pFrontRight, DcMotor pFrontLeft, DcMotor pBackRight,
-                          DcMotor pBackLeft, double pRotation, double pSpeed, BNO055IMU pImu, float header,Telemetry pTelemetry){
-        double change = -pRotation;
-        pBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        float currAngle = header;
-        double goalAngle = currAngle+change;
-        if(goalAngle<-180){
-            goalAngle=180-(Math.abs(-180-goalAngle));
-        }
-        else if (goalAngle>180){
-            goalAngle=-180+(Math.abs(180-goalAngle));
-        }
-
-        pTelemetry.addData("Goal Angle: ",goalAngle);
-        //-129
-        pTelemetry.addData("Current Angle: ",currAngle);
-        pTelemetry.update();
-        try {
-            Thread.sleep(2000);
-        } catch(InterruptedException E){
-
-        }
-
-        if(pRotation>0){
-            while(Math.abs(currAngle-goalAngle)>2){
-                pFrontRight.setPower(-pSpeed);
-                pBackRight.setPower(-pSpeed);
-                pFrontLeft.setPower(pSpeed);
-                pBackLeft.setPower(pSpeed);
-            }
-        }
-        else if(pRotation<0){
-            while(Math.abs(currAngle-goalAngle)>2){
-                pFrontRight.setPower(pSpeed);
-                pBackRight.setPower(pSpeed);
-                pFrontLeft.setPower(-pSpeed);
-                pBackLeft.setPower(-pSpeed);
-            }
-        }
-    }
-
     private void turnWithEncodersWithCorrection(DcMotor pFrontRight, DcMotor pFrontLeft, DcMotor pBackRight,
                                                 DcMotor pBackLeft, double pRotation, double pSpeed, BNO055IMU pImu, float header,Telemetry pTelemetry) {
 
@@ -467,10 +439,10 @@ public class NavigationHelper {
 
         if(currAngle<-180){
             double tempAngle = pRotation+currAngle;
-             goalAngle = tempAngle + 180;
+            goalAngle = tempAngle + 180;
         }
         else{
-             goalAngle = currAngle - pRotation;
+            goalAngle = currAngle - pRotation;
 
         }
 
@@ -495,10 +467,6 @@ public class NavigationHelper {
                 currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                         AngleUnit.DEGREES).firstAngle;
 
-                pTelemetry.addData("Goal Angle: ",goalAngle);
-                //-129
-                pTelemetry.addData("Current Angle: ",currAngle);
-                pTelemetry.update();
             }
         }
         else{

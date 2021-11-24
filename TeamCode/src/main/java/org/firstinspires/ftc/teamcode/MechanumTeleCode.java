@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp(name="drive", group="teleop")
 
@@ -19,6 +24,7 @@ public class MechanumTeleCode extends LinearOpMode {
     DcMotor intake;
     DcMotor carousel;
     Servo dumperServo;
+    BNO055IMU imu;
     final double dumperDump = 0.35;
     final double dumperGoingUp = 0.65;
     final double dumperIntaking = 0.84;
@@ -38,6 +44,15 @@ public class MechanumTeleCode extends LinearOpMode {
     boolean slowMode = false;
 
     public void initialize(){
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        imu = hardwareMap.get(BNO055IMU.class,"imu");
+        imu.initialize(parameters);
+
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
@@ -207,6 +222,10 @@ public class MechanumTeleCode extends LinearOpMode {
                 telemetry.update();
                 mecanumDrive(1);
             }
+            float header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                    AngleUnit.DEGREES).firstAngle;
+            telemetry.addData("IMU:", header);
+            telemetry.update();
             idle();
         }
     }

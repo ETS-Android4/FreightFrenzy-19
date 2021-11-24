@@ -36,7 +36,8 @@ public class AutoRedFarUpdated extends LinearOpMode {
     final double dumperIntaking = 0.85;
 
     DetectionHelper pipeline;
-    NavigationHelper navigate = new NavigationHelper();
+    //navigationhelper
+    NavigationTester navigate = new NavigationTester();
     ElapsedTime spinTime = new ElapsedTime();
     BNO055IMU imu;
 
