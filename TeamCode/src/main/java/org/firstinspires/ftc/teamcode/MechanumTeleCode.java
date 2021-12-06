@@ -21,13 +21,17 @@ public class MechanumTeleCode extends LinearOpMode {
     DcMotor backRightMotor;
     DcMotor frontLeftMotor;
     DcMotor dumperLift;
+    DcMotor slideMotor;
     DcMotor intake;
     DcMotor carousel;
     Servo dumperServo;
     BNO055IMU imu;
-    final double dumperDump = 0.35;
-    final double dumperGoingUp = 0.65;
-    final double dumperIntaking = 0.84;
+    final double dumperDump = 0.65;
+    final double dumperGoingUp = 0.8;
+    final double dumperIntaking = 0.97;
+    final double slidePower = 0.95;
+    int currPos = 0;
+    int targetPos = 1000;
     ElapsedTime a_time = new ElapsedTime();
     ElapsedTime b2_time = new ElapsedTime();
     ElapsedTime x2_time = new ElapsedTime();
@@ -58,9 +62,9 @@ public class MechanumTeleCode extends LinearOpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
 
-        dumperLift = hardwareMap.get(DcMotor.class, "dumperLift");
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
+        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
 
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         dumperServo.setPosition(dumperIntaking);
@@ -70,9 +74,86 @@ public class MechanumTeleCode extends LinearOpMode {
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
     }
 
-    private void mecanumDrive(double scale){
+    private class AttachmentsThread extends Thread {
+
+        public void AttachmentsThread() {
+            this.setName("Attachments Thread");
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (!isInterrupted()) {
+                    if(gamepad1.dpad_up && dpadup_time.seconds() >= 0.25){
+                        dpadup_time.reset();
+                        currPos += targetPos;
+                        slideMotor.setTargetPosition(currPos);
+                        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(slideMotor.isBusy()){
+                            slideMotor.setPower(slidePower);
+                            telemetry.addData("encoder pos:", slideMotor.getCurrentPosition());
+                            telemetry.update();
+                        }
+                        slideMotor.setPower(0);
+                    }
+                    if(gamepad1.dpad_down && dpaddown_time.seconds() >= 0.25){
+                        dpaddown_time.reset();
+                        currPos = 0;
+                        slideMotor.setTargetPosition(currPos);
+                        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(slideMotor.isBusy()){
+                            slideMotor.setPower(-slidePower);
+                            telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                            telemetry.update();
+                        }
+                        slideMotor.setPower(0);
+                    }
+
+                    if(Math.abs(currPos-slideMotor.getCurrentPosition())>50){
+                        slideMotor.setTargetPosition(currPos);
+                        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(slideMotor.isBusy()){
+                            if(gamepad1.dpad_down){
+                                currPos = 0;
+                                slideMotor.setTargetPosition(currPos);
+                                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                                while(slideMotor.isBusy()){
+                                    slideMotor.setPower(-slidePower);
+                                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                                    telemetry.update();
+                                }
+                                slideMotor.setPower(0);
+                                break;
+                            }
+                            else{
+                                if(targetPos>0){
+                                    slideMotor.setPower(slidePower);
+                                }
+                                if(targetPos<0){
+                                    slideMotor.setPower(-slidePower);
+                                }
+                                slideMotor.setPower(0);
+                            }
+
+                        }
+                    }
+                    idle();
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
+
+        private void mecanumDrive(double scale){
 
         double radius= Math.hypot(gamepad2.left_stick_x,gamepad2.left_stick_y);
         double angle = (Math.atan2(-(gamepad2.left_stick_y),(gamepad2.left_stick_x)))-(Math.PI/4);
@@ -110,7 +191,9 @@ public class MechanumTeleCode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
+        Thread attachments = new MechanumTeleCode.AttachmentsThread();
         waitForStart();
+        attachments.start();
         while(opModeIsActive()){
 
             if(gamepad2.dpad_up && dpadup2_time.seconds()>0.25){
@@ -199,34 +282,18 @@ public class MechanumTeleCode extends LinearOpMode {
             }
 
 
-
-
-            if(gamepad1.left_stick_y>0.05){
-                dumperLift.setPower(0.5);
-            }
-            else if(gamepad1.left_stick_y<-0.05){
-                dumperLift.setPower(-0.5);
-            }
-            else{
-                dumperLift.setPower(0);
-            }
-
-
             if(slowMode){
-                telemetry.addData("speed", 0.35);
-                telemetry.update();
+                //telemetry.addData("speed", 0.35);
+                //telemetry.update();
                 mecanumDrive(0.35);
             }
             else{
-                telemetry.addData("speed", 1);
-                telemetry.update();
+                //telemetry.addData("speed", 1);
+                //telemetry.update();
                 mecanumDrive(1);
             }
-            float header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                    AngleUnit.DEGREES).firstAngle;
-            telemetry.addData("IMU:", header);
-            telemetry.update();
-            idle();
+
         }
+        attachments.interrupt();
     }
 }
