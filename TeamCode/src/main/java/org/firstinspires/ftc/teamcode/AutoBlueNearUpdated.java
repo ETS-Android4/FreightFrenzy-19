@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -25,14 +26,22 @@ public class AutoBlueNearUpdated extends LinearOpMode {
     DcMotor backRight;
     DcMotor intake;
     DcMotor carousel;
+    DcMotor slideMotor;
     Servo dumperServo;
+    Servo capServo;
     OpenCvCamera webcam;
     float header;
 
+    double currentAngle;
+    Orientation lastAngles = new Orientation();
+
     final double dumperDump = 0.35;
-    final double dumperGoingUp = 0.65;
-    final double dumperFirstLevel = 0.70;
-    final double dumperIntaking = 0.85;
+    final double dumperGoingUp = 0.75;
+    final double dumperFirstLevel = 0.8;
+    final double dumperIntaking = 0.94;
+    final double slidePower = 0.95;
+    int centerPos = 1000;
+    int rightPos = 2000;
 
     DetectionHelper pipeline;
     NavigationHelper navigate = new NavigationHelper();
@@ -70,31 +79,95 @@ public class AutoBlueNearUpdated extends LinearOpMode {
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
-            navigate.forwardDrive(-40,0.5,backLeft,backRight,frontRight,frontLeft,telemetry, imu,true);
+
+
+            navigate.navigate(-4, Constants2020.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
             try {
                 Thread.sleep(500);
             } catch(InterruptedException E){
 
             }
-            navigate.navigate(0, Constants2020.Direction.TURN,90,0.4,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+            navigate.navigate(25, Constants2020.Direction.LEFT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+            navigate.navigate(0, Constants2020.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
+            navigate.navigate(-6, Constants2020.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
+            navigate.navigate(18, Constants2020.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
             try {
-                Thread.sleep(250);
+                Thread.sleep(500);
             } catch(InterruptedException E){
 
             }
-            navigate.navigate(20, Constants2020.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+            if(position== DetectionHelper.DuckPosition.LEFT){
+
+            }
+            else if (position == DetectionHelper.DuckPosition.CENTER){
+                slideMotor.setTargetPosition(centerPos);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(slideMotor.isBusy()){
+                    slideMotor.setPower(slidePower);
+                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                    telemetry.update();
+                }
+                slideMotor.setPower(0);
+            }
+            else{
+                slideMotor.setTargetPosition(rightPos);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(slideMotor.isBusy()){
+                    slideMotor.setPower(slidePower);
+                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                    telemetry.update();
+                }
+                slideMotor.setPower(0);
+            }
+            dumperServo.setPosition(dumperGoingUp);
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException E){
+
+            }
+
+            intake.setPower(-0.8);
             try {
                 Thread.sleep(2000);
             } catch(InterruptedException E){
 
             }
+            intake.setPower(0);
 
-            navigate.navigate(40, Constants2020.Direction.STRAIGHT,0,0.85,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            slideMotor.setTargetPosition(0);
+            slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while(slideMotor.isBusy()){
+                slideMotor.setPower(-slidePower);
+                telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            slideMotor.setPower(0);
+
+
+
+            navigate.navigate(-10, Constants2020.Direction.STRAIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
             try {
                 Thread.sleep(250);
             } catch(InterruptedException E){
 
             }
+
+            navigate.navigate(0, Constants2020.Direction.TURN,-270,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,true);
+
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException E){
+
+            }
+
+            navigate.navigate(80, Constants2020.Direction.STRAIGHT,0,0.99,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
 
         }
 
@@ -157,13 +230,127 @@ public class AutoBlueNearUpdated extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
+        slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
+
         dumperServo.setPosition(dumperGoingUp);
 
+        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        capServo = hardwareMap.get(Servo.class, "capServo");
+        capServo.setPosition(0.3);
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    private double angleConversion()
+    {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double changeInAngle = angles.firstAngle - lastAngles.firstAngle;
+        currentAngle += changeInAngle;
+
+        /*
+        if (currentAngle > 0)
+        {
+            currentAngle = ((currentAngle + 180) % (360)) - 180;
+        }
+        else // currentAngle < 0
+        {
+            currentAngle = ((currentAngle - 180) % (360)) + 180;
+        }
+         */
+
+        if (currentAngle > 180){
+            currentAngle -= 360;
+        } else if(currentAngle < -180){
+            currentAngle += 360;
+        }
+
+        lastAngles = angles;
+        return currentAngle;
+    }
+    private void TurnUntilAngleReached(final int degrees)
+    {
+        if (degrees < 0)
+        {
+            while (true)
+            {
+                if ((angleConversion() <= degrees)) break;
+                telemetry.addData("Angle", angleConversion());
+            }
+        }
+
+        else // degrees >= 0
+        {
+            while (true)
+            {
+                if ((angleConversion() >= degrees)) break;
+                telemetry.addData("Angle", angleConversion());
+            }
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        sleep(100);
+        resetAngle();
+    }
+
+    private void resetAngle(){
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        currentAngle = 0;
+    }
+
+    public void turn(final String direction, final int degrees, int motorPower)
+    {
+        double flPower = 0, frPower = 0, blPower = 0, brPower = 0;
+        resetAngle();
+
+        switch (direction){
+            case "left":
+                flPower = -0.5 * motorPower;
+                frPower = 0.5 * motorPower;
+                blPower = -0.5 * motorPower;
+                brPower = 0.5 * motorPower;
+                break;
+
+            case "right":
+                flPower = 0.5 * motorPower;
+                frPower = -0.5 * motorPower;
+                blPower = 0.5 * motorPower;
+                brPower = -0.5 * motorPower;
+                break;
+
+            default:
+                try {
+                    throw new IllegalStateException("Invalid turn direction: " + direction);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
+        }
+
+        frontLeft.setPower(flPower);
+        frontRight.setPower(frPower);
+        backLeft.setPower(blPower);
+        backRight.setPower(brPower);
+
+        TurnUntilAngleReached(degrees);
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
 
 }

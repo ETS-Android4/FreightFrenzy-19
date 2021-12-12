@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.PIDController;
 import org.firstinspires.ftc.teamcode.Constants2020;
@@ -39,7 +40,7 @@ public class NavigationHelper {
 
 
         else if(pDirection.equals(Constants2020.Direction.TURN)){
-            turnTest(pFrontRight, pFrontLeft, pBackRight, pBackLeft, pRotation, pSpeed, pImu, header, telemetry);
+            turnTest( pFrontLeft,  pFrontRight,  pBackLeft,  pBackRight, pImu, telemetry,  pRotation, pSpeed);
         }
 
     }
@@ -407,152 +408,88 @@ public class NavigationHelper {
         pTelemetry.update();
     }
 
-    private void turnTest(DcMotor pFrontRight, DcMotor pFrontLeft, DcMotor pBackRight,
-                          DcMotor pBackLeft, double pRotation, double pSpeed, BNO055IMU pImu, float header,Telemetry pTelemetry){
-        double change = -pRotation;
-        pBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        float currAngle = header;
-        double goalAngle = currAngle+change;
-        if(goalAngle<-180){
-            goalAngle=180-(Math.abs(-180-goalAngle));
-        }
-        else if (goalAngle>180){
-            goalAngle=-180+(Math.abs(180-goalAngle));
-        }
 
-        pTelemetry.addData("Goal Angle: ",goalAngle);
-        //-129
-        pTelemetry.addData("Current Angle: ",currAngle);
-        pTelemetry.update();
-        try {
-            Thread.sleep(2000);
-        } catch(InterruptedException E){
+    public void turnTest(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, BNO055IMU imu, Telemetry telemetry, double turn, double speed){
 
-        }
-
-        if(pRotation>0){
-            while(Math.abs(currAngle-goalAngle)>2){
-                pFrontRight.setPower(-pSpeed);
-                pBackRight.setPower(-pSpeed);
-                pFrontLeft.setPower(pSpeed);
-                pBackLeft.setPower(pSpeed);
-            }
-        }
-        else if(pRotation<0){
-            while(Math.abs(currAngle-goalAngle)>2){
-                pFrontRight.setPower(pSpeed);
-                pBackRight.setPower(pSpeed);
-                pFrontLeft.setPower(-pSpeed);
-                pBackLeft.setPower(-pSpeed);
-            }
-        }
-    }
-
-    private void turnWithEncodersWithCorrection(DcMotor pFrontRight, DcMotor pFrontLeft, DcMotor pBackRight,
-                                                DcMotor pBackLeft, double pRotation, double pSpeed, BNO055IMU pImu, float header,Telemetry pTelemetry) {
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        pBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        pFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        float currAngle = header;
-
-        //double goalAngle = currAngle + pRotation;
-
-        double goalAngle;
-
-        if(currAngle<-180){
-            double tempAngle = pRotation+currAngle;
-             goalAngle = tempAngle + 180;
-        }
-        else{
-             goalAngle = currAngle - pRotation;
-
-        }
-
-        //-219
-        pTelemetry.addData("Goal Angle: ",goalAngle);
-        //-129
-        pTelemetry.addData("Current Angle: ",currAngle);
-        pTelemetry.update();
-        try {
-            Thread.sleep(2000);
-        } catch(InterruptedException E){
-
-        }
-
-        if(pRotation>0){
-            while(Math.abs(currAngle-goalAngle)>2){
-                pFrontRight.setPower(-pSpeed);
-                pBackRight.setPower(-pSpeed);
-                pFrontLeft.setPower(pSpeed);
-                pBackLeft.setPower(pSpeed);
-
-                currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                        AngleUnit.DEGREES).firstAngle;
-
-                pTelemetry.addData("Goal Angle: ",goalAngle);
-                //-129
-                pTelemetry.addData("Current Angle: ",currAngle);
-                pTelemetry.update();
-            }
-        }
-        else{
-            while(currAngle>=goalAngle){
-                pFrontRight.setPower(pSpeed);
-                pBackRight.setPower(pSpeed);
-                pFrontLeft.setPower(-pSpeed);
-                pBackLeft.setPower(-pSpeed);
-                currAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                        AngleUnit.DEGREES).firstAngle;
-
-                pTelemetry.addData("Goal Angle: ",goalAngle);
-                //-129
-                pTelemetry.addData("Current Angle: ",currAngle);
-                pTelemetry.update();
-                try {
-                    Thread.sleep(2000);
-                } catch(InterruptedException E){
-
-                }
-            }
-
-        }
-        pFrontRight.setPower(0);
-        pBackRight.setPower(0);
-        pFrontLeft.setPower(0);
-        pBackLeft.setPower(0);
-        pTelemetry.addData("Final Angle: ",currAngle);
-        pTelemetry.update();
-        try {
-            Thread.sleep(2000);
-        } catch(InterruptedException E){
-
-        }
-
-        /*float correction = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                AngleUnit.DEGREES).firstAngle - header;
-
-        turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, pRotation,pSpeed,pImu,pTelemetry);
-        double currentAngle = pImu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+        double error = speed*10*3 - 7;
+        double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                 AngleUnit.DEGREES).firstAngle;
 
-         */
+        telemetry.addData("curr:", currentAngle);
+        telemetry.update();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (turn < 0) {
 
-        /*if(Math.abs(correction)>=10){
-            pTelemetry.addData("Correction value: ",correction);
-            pTelemetry.update();
+            double math = currentAngle + turn;
+
+            if (math<-180) {
+                math = 180 - Math.abs(-180-math);
+            }
+            telemetry.addData("goalAngle:", math);
+            telemetry.update();
             try {
-                sleep(1000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            turnWithEncoders(pFrontRight,pFrontLeft,pBackRight,pBackLeft, correction,0.35,pImu,pTelemetry);
-        }*/
 
+            while (Math.abs(currentAngle - math) > error) {
+                frontLeft.setPower(speed);
+                backLeft.setPower(speed);
+                frontRight.setPower(-speed);
+                backRight.setPower(-speed);
+
+                currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                        AngleUnit.DEGREES).firstAngle;
+
+            }
+
+            frontLeft.setPower(0);
+            backLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
+
+
+
+        }
+        else{
+            double math = currentAngle + turn;
+            if (math>180) {
+                math = -180 + Math.abs(180-math);
+            }
+            telemetry.addData("goalAngle:", math);
+            telemetry.update();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            while (Math.abs(currentAngle - math) > error) {
+                frontLeft.setPower(-speed);
+                backLeft.setPower(-speed);
+                frontRight.setPower(speed);
+                backRight.setPower(speed);
+
+                currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                        AngleUnit.DEGREES).firstAngle;
+
+            }
+            frontLeft.setPower(0);
+            backLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+
+        }
     }
+
 }

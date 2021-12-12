@@ -24,18 +24,26 @@ public class AutoBlueFarUpdated extends LinearOpMode {
     DcMotor frontRight;
     DcMotor backLeft;
     DcMotor backRight;
+    DcMotor slideMotor;
     DcMotor intake;
     DcMotor carousel;
     Servo dumperServo;
+    Servo capServo;
     OpenCvCamera webcam;
     float header;
 
     final double dumperDump = 0.35;
-    final double dumperGoingUp = 0.65;
-    final double dumperFirstLevel = 0.70;
-    final double dumperIntaking = 0.85;
+    final double dumperGoingUp = 0.75;
+    final double dumperFirstLevel = 0.8;
+    final double dumperIntaking = 0.94;
+    final double slidePower = 0.95;
+    int centerPos = 1000;
+    int rightPos = 2000;
+
+
 
     DetectionHelper pipeline;
+    //navigationhelper
     NavigationHelper navigate = new NavigationHelper();
     ElapsedTime spinTime = new ElapsedTime();
     BNO055IMU imu;
@@ -67,46 +75,89 @@ public class AutoBlueFarUpdated extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("entering loop", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
-            // Blue Far Code
 
-            //go forward (backward) a bit
-            navigate.navigate(-8, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(-4, Constants2020.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            //strafe left, because backwards
-            navigate.navigate(22, Constants2020.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(0, Constants2020.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            //carousel
+            navigate.navigate(-22, Constants2020.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             spinTime.reset();
-            while(spinTime.seconds()<5) {
-                carousel.setPower(-0.25);
+            while (spinTime.seconds() < 2.2) {
+                carousel.setPower(-0.65);
+
+            }
+            carousel.setPower(0);
+
+            navigate.navigate(44, Constants2020.Direction.STRAIGHT, 0, 0.7, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
+            navigate.navigate(0, Constants2020.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
+            navigate.navigate(-5, Constants2020.Direction.STRAIGHT, 0, -0.7, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
+
+            navigate.navigate(21, Constants2020.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+
+            if(position== DetectionHelper.DuckPosition.LEFT){
+
+            }
+            else if (position == DetectionHelper.DuckPosition.CENTER){
+                slideMotor.setTargetPosition(centerPos);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(slideMotor.isBusy()){
+                    slideMotor.setPower(slidePower);
+                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                    telemetry.update();
+                }
+                slideMotor.setPower(0);
+            }
+            else{
+                slideMotor.setTargetPosition(rightPos);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(slideMotor.isBusy()){
+                    slideMotor.setPower(slidePower);
+                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                    telemetry.update();
+                }
+                slideMotor.setPower(0);
+            }
+            dumperServo.setPosition(dumperGoingUp);
+            try {
+                Thread.sleep(250);
+            } catch(InterruptedException E){
 
             }
 
-            carousel.setPower(0);
+            intake.setPower(-0.55);
+            try {
+                Thread.sleep(1200);
+            } catch(InterruptedException E){
 
-            //go backward
-            navigate.navigate(-32, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            }
+            intake.setPower(0);
 
-            //turn counterclockwise 90 degrees
-            navigate.navigate(0, Constants2020.Direction.TURN,-90,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            slideMotor.setTargetPosition(0);
+            slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while(slideMotor.isBusy()){
+                slideMotor.setPower(-slidePower);
+                telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            slideMotor.setPower(0);
 
-            //go backward
-            navigate.navigate(-22, Constants2020.Direction.STRAIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(-7, Constants2020.Direction.STRAIGHT, 0, -0.99, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
 
-            //strafe right
-            navigate.navigate(28, Constants2020.Direction.RIGHT,0,-0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(0, Constants2020.Direction.TURN, -90, 0.75, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            //go forward - park
-            navigate.navigate(22, Constants2020.Direction.STRAIGHT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(-75, Constants2020.Direction.STRAIGHT,0, 0.98,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
+            break;
         }
-
     }
 
     public void initialize(){
@@ -166,15 +217,23 @@ public class AutoBlueFarUpdated extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
+        slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
         dumperServo.setPosition(dumperGoingUp);
+        capServo = hardwareMap.get(Servo.class, "capServo");
+        capServo.setPosition(0.3);
 
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-    //    spintime.reset();
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //    spintime.reset();
     }
 
 }
