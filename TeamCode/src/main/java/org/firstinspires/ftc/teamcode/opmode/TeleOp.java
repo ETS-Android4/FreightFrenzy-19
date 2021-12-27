@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -12,9 +11,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@TeleOp(name="drive", group="teleop")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="drive", group="teleop")
 
-public class MechanumTeleCode extends LinearOpMode {
+public class TeleOp extends LinearOpMode {
 
     DcMotor backLeftMotor;
     DcMotor frontRightMotor;
@@ -187,7 +186,7 @@ public class MechanumTeleCode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        Thread attachments = new MechanumTeleCode.AttachmentsThread();
+        Thread attachments = new TeleOp.AttachmentsThread();
         waitForStart();
         attachments.start();
         while(opModeIsActive()){

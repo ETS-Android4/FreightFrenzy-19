@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,13 +12,16 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.helper.Constants2022;
+import org.firstinspires.ftc.teamcode.helper.DetectionHelper;
+import org.firstinspires.ftc.teamcode.helper.NavigationHelper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="AUTO RED FAR test v1", group="auto")
+@Autonomous(name="AUTO BLUE FAR test v1", group="auto")
 
-public class AutoRedFarUpdated extends LinearOpMode {
+public class AutoBlueFarUpdated extends LinearOpMode {
 
     DcMotor frontLeft;
     DcMotor frontRight;
@@ -81,25 +84,26 @@ public class AutoRedFarUpdated extends LinearOpMode {
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
 
-            navigate.navigate(0, Constants2020.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(-4, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(-16, Constants2020.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(0, Constants2022.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(19, Constants2020.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
-
+            navigate.navigate(-22, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             spinTime.reset();
             while (spinTime.seconds() < 2.2) {
-                carousel.setPower(0.65);
+                carousel.setPower(-0.65);
 
             }
             carousel.setPower(0);
 
-            navigate.navigate(42, Constants2020.Direction.RIGHT, 0, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(44, Constants2022.Direction.STRAIGHT, 0, 0.7, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(-18, Constants2020.Direction.STRAIGHT, 0, -0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(0, Constants2022.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(17, Constants2020.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            navigate.navigate(-5, Constants2022.Direction.STRAIGHT, 0, -0.7, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
+
+            navigate.navigate(21, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
 
             if(position== DetectionHelper.DuckPosition.LEFT){
@@ -127,14 +131,14 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             dumperServo.setPosition(dumperGoingUp);
             try {
-                Thread.sleep(500);
+                Thread.sleep(250);
             } catch(InterruptedException E){
 
             }
 
             intake.setPower(-0.55);
             try {
-                Thread.sleep(1100);
+                Thread.sleep(1200);
             } catch(InterruptedException E){
 
             }
@@ -149,17 +153,11 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             slideMotor.setPower(0);
 
-            navigate.navigate(-5, Constants2020.Direction.STRAIGHT, 0, -0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
+            navigate.navigate(-7, Constants2022.Direction.STRAIGHT, 0, -0.99, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
 
-            navigate.navigate(0, Constants2020.Direction.TURN, -270, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(0, Constants2022.Direction.TURN, -90, 0.75, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
-
-            }
-
-            navigate.navigate(-65, Constants2020.Direction.STRAIGHT,0, 0.98,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            navigate.navigate(-75, Constants2022.Direction.STRAIGHT,0, 0.98,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
             break;
         }
@@ -238,7 +236,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-    //    spintime.reset();
+        //    spintime.reset();
     }
 
 }

@@ -1,35 +1,21 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.helper;
 
-public class Constants2020 {
-    public static enum TargetZone {
-        ALPHA, BETA, CHARLIE;
-    }
+public class Constants2022 {
 
     public static enum Direction {
         STRAIGHT, LEFT, RIGHT, TURN;
     }
 
-    //wobble arm hinge servo positions:
-    public static enum HingeServoPositions {
-        UP, MID, DOWN;
-    }
+
 
     public static String BACK_LEFT_MOTOR = "backLeft";
     public static String FRONT_LEFT_MOTOR = "frontLeft";
     public static String BACK_RIGHT_MOTOR = "backRight";
     public static String FRONT_RIGHT_MOTOR = "frontRight";
 
-    //wobble arm servos:
-    public static String HINGE_SERVO = "hingeServo";
-    public static String CLAMP_SERVO = "clampServo";
-
-    public static String INTAKE = "intake";
-    public static String SHOOTER = "shooter";
-    public static String SHOOTERSERVO = "shooterservo";
-
     public static String POSITION = "position";
     public static String BLUE_FLAG = "blueFlag";
-    public static String WALL_FLAG = "wallFlag";
+    public static String STORAGE_FLAG = "storageFlag";
     public static String TELEMETRY = "telemetry";
 
     public static String IMU = "imu";

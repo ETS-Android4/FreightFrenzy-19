@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.helper.NavigationHelper;
+import org.firstinspires.ftc.teamcode.helper.Constants2022;
 
 @Autonomous(name="Go Forward", group="auto")
 public class GoForwardEasy extends LinearOpMode {
@@ -32,7 +33,7 @@ public class GoForwardEasy extends LinearOpMode {
 
             waitForStart();
 
-            navigate.navigate(50, Constants2020.Direction.RIGHT, 0, -0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(50, Constants2022.Direction.RIGHT, 0, -0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
             frontLeft.setPower(0);
             frontRight.setPower(0);

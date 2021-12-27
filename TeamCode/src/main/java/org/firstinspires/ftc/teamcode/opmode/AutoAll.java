@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -9,11 +9,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.helper.DetectionHelper;
+import org.firstinspires.ftc.teamcode.helper.NavigationHelper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.HashMap;
 
 @Autonomous(name="AUTO ALL", group="auto")
 public class AutoAll extends LinearOpMode {
@@ -49,6 +49,8 @@ public class AutoAll extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
+
+        Detection();
 
         waitForStart();
         while(opModeIsActive()){
@@ -121,6 +123,8 @@ public class AutoAll extends LinearOpMode {
             }
             if(gamepad1.y){
                 completeConfig = true;
+                telemetry.addLine("Press y to Confirm!");
+                telemetry.update();
             }
         }
 
@@ -178,6 +182,21 @@ public class AutoAll extends LinearOpMode {
     }
 
     public void Path(){
+
+        if (blue) {
+
+            if (near) {
+
+
+            }
+
+
+        }
+
+        else if (red) {
+
+
+        }
 
     }
 
