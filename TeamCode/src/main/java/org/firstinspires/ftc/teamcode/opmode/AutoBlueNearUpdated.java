@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.helper.Constants2022;
+import org.firstinspires.ftc.teamcode.helper.DetectionHelper;
+import org.firstinspires.ftc.teamcode.helper.NavigationHelper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -81,20 +84,20 @@ public class AutoBlueNearUpdated extends LinearOpMode {
                     AngleUnit.DEGREES).firstAngle;
 
 
-            navigate.navigate(-4, Constants2020.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(-4, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
             try {
                 Thread.sleep(500);
             } catch(InterruptedException E){
 
             }
 
-            navigate.navigate(25, Constants2020.Direction.LEFT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+            navigate.navigate(25, Constants2022.Direction.LEFT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
-            navigate.navigate(0, Constants2020.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(0, Constants2022.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(-6, Constants2020.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(-6, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(18, Constants2020.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            navigate.navigate(18, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
             try {
                 Thread.sleep(500);
@@ -151,7 +154,7 @@ public class AutoBlueNearUpdated extends LinearOpMode {
 
 
 
-            navigate.navigate(-10, Constants2020.Direction.STRAIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+            navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
             try {
                 Thread.sleep(250);
@@ -159,7 +162,7 @@ public class AutoBlueNearUpdated extends LinearOpMode {
 
             }
 
-            navigate.navigate(0, Constants2020.Direction.TURN,-270,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,true);
+            navigate.navigate(0, Constants2022.Direction.TURN,-270,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,true);
 
             try {
                 Thread.sleep(500);
@@ -167,7 +170,7 @@ public class AutoBlueNearUpdated extends LinearOpMode {
 
             }
 
-            navigate.navigate(80, Constants2020.Direction.STRAIGHT,0,0.99,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(80, Constants2022.Direction.STRAIGHT,0,0.99,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
 
         }
 
