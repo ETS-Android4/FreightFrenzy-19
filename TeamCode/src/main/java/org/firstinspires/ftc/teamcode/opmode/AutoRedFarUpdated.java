@@ -83,8 +83,15 @@ public class AutoRedFarUpdated extends LinearOpMode {
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
+            navigate.navigate(0, Constants2022.Direction.TURN, 90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(0, Constants2022.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //navigate.navigate(0, Constants2022.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
             navigate.navigate(-16, Constants2022.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
