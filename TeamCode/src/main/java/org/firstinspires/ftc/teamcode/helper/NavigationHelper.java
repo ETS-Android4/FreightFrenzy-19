@@ -46,12 +46,14 @@ public class NavigationHelper {
 
     // This is the method that gets called if constant is STRAIGHT
     public void forwardDrive (double pTgtDistance, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, Telemetry telemetry, BNO055IMU pImu, boolean isForward) {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.mode = BNO055IMU.SensorMode.IMU;
         pImu.initialize(parameters);
+         */
 
         pFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         pBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
