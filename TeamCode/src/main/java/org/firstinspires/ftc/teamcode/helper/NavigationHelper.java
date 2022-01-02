@@ -419,13 +419,6 @@ public class NavigationHelper {
         double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                 AngleUnit.DEGREES).firstAngle;
 
-        telemetry.addData("curr:", currentAngle);
-        telemetry.update();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         if (turn < 0) {
 
             double math = currentAngle + turn;

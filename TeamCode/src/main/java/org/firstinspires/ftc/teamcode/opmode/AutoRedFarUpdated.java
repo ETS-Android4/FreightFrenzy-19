@@ -86,13 +86,13 @@ public class AutoRedFarUpdated extends LinearOpMode {
             //navigate.navigate(0, Constants2022.Direction.TURN, 90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
 
-            navigate.navigate(0, Constants2022.Direction.TURN, 180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(0, Constants2022.Direction.TURN, 180, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(12, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(8, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(30, Constants2022.Direction.LEFT,0,0.4,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+            navigate.navigate(30, Constants2022.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
-            navigate.navigate(-22, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(-13, Constants2022.Direction.STRAIGHT,0, -0.2,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             spinTime.reset();
             while (spinTime.seconds() < 2.2) {
@@ -101,20 +101,21 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             carousel.setPower(0);
 
-            navigate.navigate(35, Constants2022.Direction.STRAIGHT,0, 0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(25 , Constants2022.Direction.STRAIGHT,0, 0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             navigate.navigate(0, Constants2022.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
             parameters.calibrationDataFile = "BNO055IMUCalibration.json";
             parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.mode = BNO055IMU.SensorMode.IMU;
             imu.initialize(parameters);
+             */
 
             navigate.navigate(-8, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(35, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(30, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             if(position== DetectionHelper.DuckPosition.LEFT){
 
@@ -146,9 +147,9 @@ public class AutoRedFarUpdated extends LinearOpMode {
 
             }
 
-            intake.setPower(-0.55);
+            intake.setPower(-0.7);
             try {
-                Thread.sleep(1100);
+                Thread.sleep(1500);
             } catch(InterruptedException E){
 
             }
@@ -163,10 +164,9 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             slideMotor.setPower(0);
 
-            navigate.navigate(-53, Constants2022.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(-48, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(28, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
-
+            navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
 /*
             spinTime.reset();
