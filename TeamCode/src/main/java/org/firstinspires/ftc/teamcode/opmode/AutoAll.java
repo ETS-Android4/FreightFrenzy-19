@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.helper.DetectionHelper;
 import org.firstinspires.ftc.teamcode.helper.NavigationHelper;
+import org.firstinspires.ftc.teamcode.helper.SensorHelper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -28,6 +30,8 @@ public class AutoAll extends LinearOpMode {
     OpenCvCamera webcam;
     float header;
 
+    ColorSensor frontColor;
+
     final double dumperDump = 0.35;
     final double dumperGoingUp = 0.65;
     final double dumperFirstLevel = 0.70;
@@ -36,6 +40,8 @@ public class AutoAll extends LinearOpMode {
     DetectionHelper pipeline;
     NavigationHelper navigate = new NavigationHelper();
     ElapsedTime spinTime = new ElapsedTime();
+    SensorHelper sensorHelper = new SensorHelper();
+
     BNO055IMU imu;
 
     boolean completeConfig = false;
@@ -206,6 +212,12 @@ public class AutoAll extends LinearOpMode {
 
     public void Placing(){
 
+    }
+
+    public void Park(){
+        if (far) {
+            sensorHelper.untilRed(backLeft, backRight, frontRight, frontLeft, telemetry, imu, frontColor);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -24,7 +25,8 @@ public class TeleOp extends LinearOpMode {
     DcMotor intake;
     DcMotor carousel;
     Servo dumperServo;
-    Servo capServo;
+  //  Servo capServo;
+  CRServo arm;
     BNO055IMU imu;
     final double dumperDump = 0.65;
     final double dumperGoingUp = 0.8;
@@ -74,8 +76,8 @@ public class TeleOp extends LinearOpMode {
 
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         dumperServo.setPosition(dumperIntaking);
-        capServo = hardwareMap.get(Servo.class, "capServo");
-        capServo.setPosition(0.3);
+       // capServo = hardwareMap.get(Servo.class, "capServo");
+     //   capServo.setPosition(0.3);
         position = 0.3;
 
         //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFES WERE FLIPPED)

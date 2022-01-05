@@ -31,7 +31,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
     DcMotor intake;
     DcMotor carousel;
     Servo dumperServo;
-    Servo capServo;
+   // Servo capServo;
     OpenCvCamera webcam;
     float header;
 
@@ -113,7 +113,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
             imu.initialize(parameters);
              */
 
-            navigate.navigate(-8, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(-11, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             navigate.navigate(30, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
@@ -305,8 +305,8 @@ public class AutoRedFarUpdated extends LinearOpMode {
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
         dumperServo.setPosition(dumperGoingUp);
-        capServo = hardwareMap.get(Servo.class, "capServo");
-        capServo.setPosition(0.3);
+      //  capServo = hardwareMap.get(Servo.class, "capServo");
+        //capServo.setPosition(0.3);
 
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
