@@ -28,15 +28,15 @@ public class TeleOp extends LinearOpMode {
   //  Servo capServo;
   CRServo arm;
     BNO055IMU imu;
-    final double dumperDump = 0.65;
-    final double dumperGoingUp = 0.8;
-    final double dumperIntaking = 0.98;
+    final double dumperDump = 0.6;
+    final double dumperGoingUp = 0.67;
+    final double dumperIntaking = 0.8;
     final double slidePower = 0.95;
     final double capDown = 0.75;
     final double capUp = 0.45;
     double position;
     int currPos = 0;
-    int targetPos = 1200;
+    int targetPos = 1300;
     ElapsedTime a_time = new ElapsedTime();
     ElapsedTime b2_time = new ElapsedTime();
     ElapsedTime x2_time = new ElapsedTime();
@@ -284,7 +284,7 @@ public class TeleOp extends LinearOpMode {
             if(gamepad2.right_bumper && dpadup_time.seconds()>0.25){
                 dpadup_time.reset();
                 if(!intakeOn){
-                    intake.setPower(0.6);
+                    intake.setPower(0.8);
                     intakeOn=true;
                     extakeOn=false;
                 }
