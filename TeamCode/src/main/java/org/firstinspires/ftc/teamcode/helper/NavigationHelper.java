@@ -146,6 +146,11 @@ public class NavigationHelper {
             }
         }
 
+        pFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //stop motors
         pFrontLeft.setPower(0);
         pFrontRight.setPower(0);

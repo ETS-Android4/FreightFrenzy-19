@@ -30,7 +30,8 @@ public class TeleOp extends LinearOpMode {
     BNO055IMU imu;
     final double dumperDump = 0.6;
     final double dumperGoingUp = 0.67;
-    final double dumperIntaking = 0.8;
+    //0.8
+    final double dumperIntaking = 0.83;
     final double slidePower = 0.95;
     final double capDown = 0.75;
     final double capUp = 0.45;

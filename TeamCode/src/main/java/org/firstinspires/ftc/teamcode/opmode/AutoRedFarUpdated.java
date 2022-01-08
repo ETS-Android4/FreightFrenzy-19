@@ -81,40 +81,50 @@ public class AutoRedFarUpdated extends LinearOpMode {
             telemetry.update();
             header = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
                     AngleUnit.DEGREES).firstAngle;
-            //navigate.navigate(0, Constants2022.Direction.TURN, 90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
+
+            navigate.navigate(-8, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
+            dumperServo.setPosition(dumperFirstLevel);
+
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException E){
+
+            }
+
+            navigate.navigate(35, Constants2022.Direction.RIGHT,0,0.35,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
             navigate.navigate(0, Constants2022.Direction.TURN, 180, 0.4, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
+            navigate.navigate(6, Constants2022.Direction.LEFT,0,0.35,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+            navigate.navigate(-3, Constants2022.Direction.STRAIGHT,0, -0.2,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
+
+            /*navigate.navigate(0, Constants2022.Direction.TURN, 180, 0.4, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+
             dumperServo.setPosition(dumperGoingUp);
 
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
+            navigate.navigate(8, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
-            }
-
-            navigate.navigate(8, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
-
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
-
-            }
             navigate.navigate(35, Constants2022.Direction.LEFT,0,0.35,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
 
 
             navigate.navigate(-13, Constants2022.Direction.STRAIGHT,0, -0.2,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
+
+             */
             spinTime.reset();
 
             carousel.setPower(0.55);
 
             while (spinTime.seconds() < 3.5) {
-                //frontLeft.setPower(-0.08);
-                //frontRight.setPower(-0.08);
-                //backRight.setPower(-0.08);
-                //backLeft.setPower(-0.08);
+                frontLeft.setPower(-0.05);
+                frontRight.setPower(-0.05);
+                backRight.setPower(-0.05);
+                backLeft.setPower(-0.05);
             }
             frontLeft.setPower(0);
             frontRight.setPower(0);
@@ -123,7 +133,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
 
             carousel.setPower(0);
 
-            navigate.navigate(25 , Constants2022.Direction.STRAIGHT,0, 0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(25 , Constants2022.Direction.STRAIGHT,0, 0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
             navigate.navigate(0, Constants2022.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
@@ -143,7 +153,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
 
 
             if(position== DetectionHelper.DuckPosition.LEFT){
-                navigate.navigate(29, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(29, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
                 dumperServo.setPosition(dumperGoingUp);
                 try {
@@ -155,7 +165,22 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             else if (position == DetectionHelper.DuckPosition.CENTER){
 
-                navigate.navigate(24, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(22, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+                try{
+                    sleep(500);
+                }catch (Exception e) {
+
+                }
+
+                dumperServo.setPosition(dumperFirstLevel);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
+
+                }
+
+
 
                 slideMotor.setTargetPosition(centerPos);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -166,15 +191,18 @@ public class AutoRedFarUpdated extends LinearOpMode {
                 }
                 slideMotor.setPower(0);
 
+            }
+            else{
+                navigate.navigate(20, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
                 dumperServo.setPosition(dumperFirstLevel);
                 try {
                     Thread.sleep(500);
                 } catch(InterruptedException E){
 
                 }
-            }
-            else{
-                navigate.navigate(20, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
+
 
                 slideMotor.setTargetPosition(rightPos);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -185,12 +213,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
                 }
                 slideMotor.setPower(0);
 
-                dumperServo.setPosition(dumperFirstLevel);
-                try {
-                    Thread.sleep(500);
-                } catch(InterruptedException E){
 
-                }
 
             }
 
@@ -212,7 +235,15 @@ public class AutoRedFarUpdated extends LinearOpMode {
             slideMotor.setPower(0);
 
             if(position== DetectionHelper.DuckPosition.LEFT){
-                navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+                navigate.navigate(-35, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                try{
+                    sleep(500);
+                }catch (Exception e) {
+
+                }
+                navigate.navigate(18, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+                /*navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
                 dumperServo.setPosition(0);
 
@@ -224,21 +255,30 @@ public class AutoRedFarUpdated extends LinearOpMode {
 
                 navigate.navigate(80, Constants2022.Direction.STRAIGHT,0, 0.99,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
+
+                 */
             }
             else if(position == DetectionHelper.DuckPosition.CENTER){
-                navigate.navigate(-15, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(-30, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
                 try{
                     sleep(500);
                 }catch (Exception e) {
 
                 }
-                navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
-                navigate.navigate(-15, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(18, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
 
             }
             else if(position == DetectionHelper.DuckPosition.RIGHT){
-                navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+                navigate.navigate(-25, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                try{
+                    sleep(500);
+                }catch (Exception e) {
+
+                }
+                navigate.navigate(18, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+                /*navigate.navigate(23, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
                 dumperServo.setPosition(0);
 
@@ -250,6 +290,8 @@ public class AutoRedFarUpdated extends LinearOpMode {
 
                 navigate.navigate(80, Constants2022.Direction.STRAIGHT,0, 0.99,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
+
+                 */
             }
 
 
