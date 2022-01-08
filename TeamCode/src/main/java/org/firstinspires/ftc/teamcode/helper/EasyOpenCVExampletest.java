@@ -112,7 +112,7 @@ public class EasyOpenCVExampletest extends LinearOpMode
         //left
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(30,160);
         //right
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(233,125);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(233,160);
 
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;

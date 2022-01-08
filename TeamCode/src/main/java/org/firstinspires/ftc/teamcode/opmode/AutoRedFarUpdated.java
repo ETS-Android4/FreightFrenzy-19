@@ -35,15 +35,13 @@ public class AutoRedFarUpdated extends LinearOpMode {
     OpenCvCamera webcam;
     float header;
 
-    final double dumperDump = 0.35;
-    final double dumperGoingUp = 0.75;
-    final double dumperFirstLevel = 0.8;
-    final double dumperIntaking = 0.94;
+    final double dumperDump = 0;
+    final double dumperGoingUp = 0.65;
+    final double dumperFirstLevel = 0.7;
+    final double dumperIntaking = 0.85                                                  ;
     final double slidePower = 0.95;
-    int centerPos = 1000;
-    int rightPos = 2000;
-
-
+    int centerPos = 1500;
+    int rightPos = 2600;
 
     DetectionHelper pipeline;
     //navigationhelper
@@ -85,42 +83,80 @@ public class AutoRedFarUpdated extends LinearOpMode {
                     AngleUnit.DEGREES).firstAngle;
             //navigate.navigate(0, Constants2022.Direction.TURN, 90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
+            navigate.navigate(0, Constants2022.Direction.TURN, 180, 0.4, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            navigate.navigate(0, Constants2022.Direction.TURN, 180, 0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            dumperServo.setPosition(dumperGoingUp);
+
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException E){
+
+            }
 
             navigate.navigate(8, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(30, Constants2022.Direction.LEFT,0,0.3,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException E){
+
+            }
+            navigate.navigate(35, Constants2022.Direction.LEFT,0,0.35,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+
 
             navigate.navigate(-13, Constants2022.Direction.STRAIGHT,0, -0.2,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             spinTime.reset();
-            while (spinTime.seconds() < 2.2) {
-                carousel.setPower(0.65);
 
+            carousel.setPower(0.55);
+
+            while (spinTime.seconds() < 3.5) {
+                //frontLeft.setPower(-0.08);
+                //frontRight.setPower(-0.08);
+                //backRight.setPower(-0.08);
+                //backLeft.setPower(-0.08);
             }
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backRight.setPower(0);
+            backLeft.setPower(0);
+
             carousel.setPower(0);
 
             navigate.navigate(25 , Constants2022.Direction.STRAIGHT,0, 0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
             navigate.navigate(0, Constants2022.Direction.TURN, -90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
-            /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            //look here
+            /*
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
             parameters.calibrationDataFile = "BNO055IMUCalibration.json";
             parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.mode = BNO055IMU.SensorMode.IMU;
             imu.initialize(parameters);
+
              */
 
-            navigate.navigate(-11, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(30, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+            navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
 
             if(position== DetectionHelper.DuckPosition.LEFT){
+                navigate.navigate(29, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
+                dumperServo.setPosition(dumperGoingUp);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
+
+                }
 
             }
             else if (position == DetectionHelper.DuckPosition.CENTER){
+
+                navigate.navigate(24, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
                 slideMotor.setTargetPosition(centerPos);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while(slideMotor.isBusy()){
@@ -129,8 +165,17 @@ public class AutoRedFarUpdated extends LinearOpMode {
                     telemetry.update();
                 }
                 slideMotor.setPower(0);
+
+                dumperServo.setPosition(dumperFirstLevel);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
+
+                }
             }
             else{
+                navigate.navigate(20, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
                 slideMotor.setTargetPosition(rightPos);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while(slideMotor.isBusy()){
@@ -139,11 +184,13 @@ public class AutoRedFarUpdated extends LinearOpMode {
                     telemetry.update();
                 }
                 slideMotor.setPower(0);
-            }
-            dumperServo.setPosition(dumperGoingUp);
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
+
+                dumperServo.setPosition(dumperFirstLevel);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
+
+                }
 
             }
 
@@ -164,84 +211,55 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             slideMotor.setPower(0);
 
+            if(position== DetectionHelper.DuckPosition.LEFT){
+                navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+                dumperServo.setPosition(0);
+
+                try{
+                    sleep(500);
+                }catch (Exception e) {
+
+                }
+
+                navigate.navigate(80, Constants2022.Direction.STRAIGHT,0, 0.99,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+            }
+            else if(position == DetectionHelper.DuckPosition.CENTER){
+                navigate.navigate(-15, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                try{
+                    sleep(500);
+                }catch (Exception e) {
+
+                }
+                navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+                navigate.navigate(-15, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+
+
+            }
+            else if(position == DetectionHelper.DuckPosition.RIGHT){
+                navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+
+                dumperServo.setPosition(0);
+
+                try{
+                    sleep(500);
+                }catch (Exception e) {
+
+                }
+
+                navigate.navigate(80, Constants2022.Direction.STRAIGHT,0, 0.99,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+            }
+
+
+            /*
             navigate.navigate(-48, Constants2022.Direction.STRAIGHT,0, -0.6,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
-            navigate.navigate(20, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
-
-/*
-            spinTime.reset();
-            while (spinTime.seconds() < 2.2) {
-                carousel.setPower(0.65);
-
-            }
-            carousel.setPower(0);
-
-            navigate.navigate(42, Constants2022.Direction.RIGHT, 0, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
-
-            navigate.navigate(-18, Constants2022.Direction.STRAIGHT, 0, -0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
-
-            navigate.navigate(17, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            navigate.navigate(22, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
 
-            if(position== DetectionHelper.DuckPosition.LEFT){
-
-            }
-            else if (position == DetectionHelper.DuckPosition.CENTER){
-                slideMotor.setTargetPosition(centerPos);
-                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while(slideMotor.isBusy()){
-                    slideMotor.setPower(slidePower);
-                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
-                    telemetry.update();
-                }
-                slideMotor.setPower(0);
-            }
-            else{
-                slideMotor.setTargetPosition(rightPos);
-                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while(slideMotor.isBusy()){
-                    slideMotor.setPower(slidePower);
-                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
-                    telemetry.update();
-                }
-                slideMotor.setPower(0);
-            }
-            dumperServo.setPosition(dumperGoingUp);
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
-
-            }
-
-            intake.setPower(-0.55);
-            try {
-                Thread.sleep(1100);
-            } catch(InterruptedException E){
-
-            }
-            intake.setPower(0);
-
-            slideMotor.setTargetPosition(0);
-            slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            while(slideMotor.isBusy()){
-                slideMotor.setPower(-slidePower);
-                telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
-                telemetry.update();
-            }
-            slideMotor.setPower(0);
-
-            navigate.navigate(-5, Constants2022.Direction.STRAIGHT, 0, -0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
-
-            navigate.navigate(0, Constants2022.Direction.TURN, 90, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
-
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
-
-            }
-
-            navigate.navigate(-65, Constants2022.Direction.STRAIGHT,0, 0.98,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
-*/
+             */
             break;
         }
     }
@@ -304,8 +322,8 @@ public class AutoRedFarUpdated extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
-        dumperServo.setPosition(dumperGoingUp);
-      //  capServo = hardwareMap.get(Servo.class, "capServo");
+
+        //  capServo = hardwareMap.get(Servo.class, "capServo");
         //capServo.setPosition(0.3);
 
 

@@ -31,7 +31,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
     DcMotor carousel;
     DcMotor slideMotor;
     Servo dumperServo;
-    Servo capServo;
+    //Servo capServo;
     OpenCvCamera webcam;
     float header;
 
@@ -39,12 +39,13 @@ public class AutoRedNearUpdated extends LinearOpMode {
     Orientation lastAngles = new Orientation();
 
     final double dumperDump = 0.35;
-    final double dumperGoingUp = 0.75;
+    final double dumperGoingUp = 0.65;
     final double dumperFirstLevel = 0.8;
     final double dumperIntaking = 0.94;
     final double slidePower = 0.95;
-    int centerPos = 1000;
-    int rightPos = 2000;
+    int leftPos = 300;
+    int centerPos = 1500;
+    int rightPos = 2600;
 
     DetectionHelper pipeline;
     NavigationHelper navigate = new NavigationHelper();
@@ -84,7 +85,20 @@ public class AutoRedNearUpdated extends LinearOpMode {
                     AngleUnit.DEGREES).firstAngle;
 
 
-            navigate.navigate(-13, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            if(position == DetectionHelper.DuckPosition.LEFT) {
+                navigate.navigate(-11, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            }
+            else if(position == DetectionHelper.DuckPosition.CENTER){
+                navigate.navigate(-8, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+            }
+            else if(position == DetectionHelper.DuckPosition.RIGHT){
+                navigate.navigate(-5, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+            }
+
+            dumperServo.setPosition(dumperGoingUp);
+
             try {
                 Thread.sleep(500);
             } catch(InterruptedException E){
@@ -93,7 +107,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
 
             navigate.navigate(25, Constants2022.Direction.RIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
 
-            navigate.navigate(0, Constants2022.Direction.TURN, -180, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+            navigate.navigate(0, Constants2022.Direction.TURN, -176, 0.5, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
             navigate.navigate(4, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
@@ -104,7 +118,28 @@ public class AutoRedNearUpdated extends LinearOpMode {
             }
 
             if(position== DetectionHelper.DuckPosition.LEFT){
+                /*dumperServo.setPosition(dumperGoingUp);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
 
+                }
+
+                 */
+                slideMotor.setTargetPosition(leftPos);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(slideMotor.isBusy()){
+                    slideMotor.setPower(slidePower);
+                    telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
+                    telemetry.update();
+                }
+                slideMotor.setPower(0);
+                dumperServo.setPosition(dumperGoingUp);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
+
+                }
             }
             else if (position == DetectionHelper.DuckPosition.CENTER){
                 slideMotor.setTargetPosition(centerPos);
@@ -115,6 +150,12 @@ public class AutoRedNearUpdated extends LinearOpMode {
                     telemetry.update();
                 }
                 slideMotor.setPower(0);
+                dumperServo.setPosition(dumperGoingUp);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
+
+                }
             }
             else{
                 slideMotor.setTargetPosition(rightPos);
@@ -125,12 +166,12 @@ public class AutoRedNearUpdated extends LinearOpMode {
                     telemetry.update();
                 }
                 slideMotor.setPower(0);
-            }
-            dumperServo.setPosition(dumperGoingUp);
-            try {
-                Thread.sleep(500);
-            } catch(InterruptedException E){
+                dumperServo.setPosition(dumperGoingUp);
+                try {
+                    Thread.sleep(500);
+                } catch(InterruptedException E){
 
+                }
             }
 
             intake.setPower(-0.8);
@@ -152,7 +193,17 @@ public class AutoRedNearUpdated extends LinearOpMode {
 
 
 
-            navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,false);
+            if(position == DetectionHelper.DuckPosition.LEFT) {
+                navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+            }
+            else if(position == DetectionHelper.DuckPosition.CENTER){
+                navigate.navigate(-6, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+            }
+            else if(position == DetectionHelper.DuckPosition.RIGHT){
+                navigate.navigate(-4, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
+            }
 
             try {
                 Thread.sleep(250);
@@ -160,7 +211,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
 
             }
 
-            navigate.navigate(0, Constants2022.Direction.TURN,-80,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,true);
+            navigate.navigate(0, Constants2022.Direction.TURN,85,0.5,backLeft,backRight,frontRight,frontLeft,imu,telemetry,header,true);
 
             try {
                 Thread.sleep(500);
@@ -168,7 +219,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
 
             }
 
-            navigate.navigate(80, Constants2022.Direction.STRAIGHT,0,0.99,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, true);
+            navigate.navigate(-80, Constants2022.Direction.STRAIGHT,0,-0.99,backLeft,backRight,frontRight,frontLeft,imu,telemetry, header, false);
 
         }
 
@@ -232,9 +283,8 @@ public class AutoRedNearUpdated extends LinearOpMode {
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
-        capServo = hardwareMap.get(Servo.class, "capServo");
+        //capServo = hardwareMap.get(Servo.class, "capServo");
 
-        dumperServo.setPosition(dumperGoingUp);
 
         slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
