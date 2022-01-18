@@ -112,7 +112,7 @@ public class AutoBlueFarUpdated extends LinearOpMode {
             navigate.navigate(-9, Constants2022.Direction.STRAIGHT, 0, -0.7, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, false);
 
             if(position== DetectionHelper.DuckPosition.LEFT){
-                navigate.navigate(29, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(29, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
                 dumperServo.setPosition(dumperGoingUp);
                 try {
@@ -124,7 +124,7 @@ public class AutoBlueFarUpdated extends LinearOpMode {
             }
             else if (position == DetectionHelper.DuckPosition.CENTER){
 
-                navigate.navigate(24, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(24, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
                 slideMotor.setTargetPosition(centerPos);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -137,7 +137,7 @@ public class AutoBlueFarUpdated extends LinearOpMode {
 
             }
             else{
-                navigate.navigate(21, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
+                navigate.navigate(21, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,false);
 
                 slideMotor.setTargetPosition(rightPos);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

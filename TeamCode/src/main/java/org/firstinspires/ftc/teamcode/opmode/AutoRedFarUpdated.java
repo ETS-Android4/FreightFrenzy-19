@@ -165,7 +165,7 @@ public class AutoRedFarUpdated extends LinearOpMode {
             }
             else if (position == DetectionHelper.DuckPosition.CENTER){
 
-                navigate.navigate(22, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+                navigate.navigate(25, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
                 try{
                     sleep(500);
@@ -302,6 +302,8 @@ public class AutoRedFarUpdated extends LinearOpMode {
 
 
              */
+            navigate.navigate(2, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
+
             break;
         }
     }

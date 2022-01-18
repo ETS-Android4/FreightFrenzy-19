@@ -20,13 +20,11 @@ public class TeleOp extends LinearOpMode {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     DcMotor frontLeftMotor;
-    DcMotor dumperLift;
     DcMotor slideMotor;
-    DcMotor intake;
-    DcMotor carousel;
+    DcMotor menaka;
     Servo dumperServo;
   //  Servo capServo;
-  CRServo arm;
+    Servo arm;
     BNO055IMU imu;
     final double dumperDump = 0.6;
     final double dumperGoingUp = 0.67;
@@ -71,6 +69,17 @@ public class TeleOp extends LinearOpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
 
+        menaka = hardwareMap.get(DcMotor.class, "menaka");
+        menaka.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        menaka.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        menaka.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        arm = hardwareMap.get(Servo.class, "arm");
+        arm.setPosition(0);
+
+
+/*
         intake = hardwareMap.get(DcMotor.class, "intake");
         carousel = hardwareMap.get(DcMotor.class, "carousel");
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
@@ -81,22 +90,27 @@ public class TeleOp extends LinearOpMode {
      //   capServo.setPosition(0.3);
         position = 0.3;
 
+ */
+
         //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFES WERE FLIPPED)
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        /*
 
         slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+         */
 
 
     }
@@ -162,16 +176,20 @@ public class TeleOp extends LinearOpMode {
         double bRPower = 0;
 
         if( (angle > 5*(Math.PI/12))&& (angle < 7*(Math.PI/12)) ){
-            fLPower = radius * Math.cos(Math.PI/4) - rotation;
-            bLPower = radius * Math.sin(Math.PI/4) - rotation;
-            fRPower = radius * Math.sin(Math.PI/4) + rotation;
-            bRPower = radius * Math.cos(Math.PI/4) + rotation;
+            double ratioCos=1;
+            double rationSin=1;
+            fLPower = radius * ratioCos - rotation;
+            bLPower = radius * rationSin - rotation;
+            fRPower = radius * ratioCos + rotation;
+            bRPower = radius * ratioCos + rotation;
         }
         else if( (angle < -5*(Math.PI/12))&& (angle > -7*(Math.PI/12)) ){
-            fLPower = radius * Math.cos(-3*Math.PI/4) - rotation;
-            bLPower = radius * Math.sin(-3*Math.PI/4) - rotation;
-            fRPower = radius * Math.sin(-3*Math.PI/4) + rotation;
-            bRPower = radius * Math.cos(-3*Math.PI/4) + rotation;
+            double ratioCos=1;
+            double rationSin=1;
+            fLPower = radius * ratioCos - rotation;
+            bLPower = radius * rationSin - rotation;
+            fRPower = radius * rationSin + rotation;
+            bRPower = radius * ratioCos + rotation;
         }
         else {
             fLPower = radius * Math.cos(angle) + rotation;
@@ -189,10 +207,10 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        Thread attachments = new TeleOp.AttachmentsThread();
+        //Thread attachments = new TeleOp.AttachmentsThread();
         waitForStart();
-        attachments.start();
-        while(opModeIsActive()){
+        //attachments.start();
+        while(opModeIsActive()) {
 
 
 
@@ -217,7 +235,8 @@ public class TeleOp extends LinearOpMode {
             }
 
              */
-            if(gamepad1.y && y_time.seconds() >= 0.25){
+
+            /*if(gamepad1.y && y_time.seconds() >= 0.25){
                 y_time.reset();
                 if(!endGame){
                     endGame = true;
@@ -331,24 +350,83 @@ public class TeleOp extends LinearOpMode {
                 turnTest(90, 0.5);
             }
 
-            if(slowMode){
-                //telemetry.addData("speed", 0.35);
-                //telemetry.update();
-                mecanumDrive(0.35);
-            }
-            else{
-                //telemetry.addData("speed", 1);
-                //telemetry.update();
-                mecanumDrive(1);
+             */
+
+            if (gamepad1.dpad_up) {
+
+                arm.setPosition(0.99);
+                try {
+                    sleep(1000);
+                } catch (Exception e) {
+
+                }
+
             }
 
-            telemetry.addData("imu:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                    AngleUnit.DEGREES).firstAngle);
-            telemetry.update();
+            if (gamepad1.dpad_down) {
 
+
+                arm.setPosition(0);
+                try {
+                    sleep(500);
+                } catch (Exception e) {
+
+                }
+            }
+
+            menaka.setPower(gamepad1.left_stick_x);
+
+            if(gamepad1.b){
+                menaka.setTargetPosition(1000);
+                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(menaka.isBusy()){
+                    menaka.setPower(0.3);
+
+                }
+                menaka.setPower(0);
+            }
+
+            if(gamepad1.x){
+                menaka.setTargetPosition(-1000);
+                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(menaka.isBusy()){
+                    menaka.setPower(-0.3);
+                }
+                menaka.setPower(0);
+            }
+
+            if(gamepad1.a){
+                int turn = menaka.getCurrentPosition();
+                menaka.setTargetPosition(0);
+                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(menaka.isBusy()){
+                    if(turn>0){
+                        menaka.setPower(-0.3);
+                    }
+                    else{
+                        menaka.setPower(0.3);
+                    }
+
+                }
+                menaka.setPower(0);
+            }
+
+
+                if (slowMode) {
+                    //telemetry.addData("speed", 0.35);
+                    //telemetry.update();
+                    mecanumDrive(0.35);
+                } else {
+                    //telemetry.addData("speed", 1);
+                    //telemetry.update();
+                    mecanumDrive(1);
+                }
+
+                telemetry.addData("imu:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
+                        AngleUnit.DEGREES).firstAngle);
+                telemetry.update();
+            }
         }
-        attachments.interrupt();
-    }
 
     public void turnTest(double turn, double speed){
 
@@ -418,3 +496,4 @@ public class TeleOp extends LinearOpMode {
     }
 
 }
+

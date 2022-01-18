@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode.helper;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -118,7 +119,6 @@ public class EasyOpenCVExampletest extends LinearOpMode
         static final int REGION_HEIGHT = 25;
 
         final int FOUR_RING_THRESHOLD = 140;
-        final int ONE_RING_THRESHOLD = 135;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -139,10 +139,15 @@ public class EasyOpenCVExampletest extends LinearOpMode
          */
         Mat region1_Cb;
         Mat region2_Cb;
+        Mat region1_Cr;
+        Mat region2_Cr;
         Mat YCrCb = new Mat();
+        Mat Cr = new Mat();
         Mat Cb = new Mat();
         int avg1;
         int avg2;
+        int avg3;
+        int avg4;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile DuckPosition positionCenter = DuckPosition.FALSE;
@@ -156,6 +161,8 @@ public class EasyOpenCVExampletest extends LinearOpMode
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 1);
+            Core.extractChannel(YCrCb, Cr, 0);
+
         }
 
         @Override
@@ -165,6 +172,8 @@ public class EasyOpenCVExampletest extends LinearOpMode
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
             region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+            region1_Cr = Cr.submat(new Rect(region1_pointA, region1_pointB));
+            region2_Cr = Cr.submat(new Rect(region2_pointA, region2_pointB));
         }
 
         @Override
@@ -174,7 +183,10 @@ public class EasyOpenCVExampletest extends LinearOpMode
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
             avg2 = (int) Core.mean(region2_Cb).val[0];
+            avg3 = (int) Core.mean(region1_Cr).val[0];
+            avg4 = (int) Core.mean(region2_Cr).val[0];
 
+            /*
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
@@ -188,6 +200,8 @@ public class EasyOpenCVExampletest extends LinearOpMode
                     region2_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
+
+             */
 
             positionCenter = DuckPosition.FALSE; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD) {
@@ -204,26 +218,31 @@ public class EasyOpenCVExampletest extends LinearOpMode
             }
 
 
+
+
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    2); // Negative thickness means solid fill
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region2_pointA, // First point which defines the rectangle
                     region2_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    2); // Negative thickness means solid fill
 
             return input;
         }
 
         public int[] getAnalysis()
         {
-            int[] analysis = {avg1, avg2};
+            int[] analysis = {avg1, avg2, avg3, avg4};
+
+
+
             return analysis;
         }
     }

@@ -57,10 +57,15 @@ public  class DetectionHelper extends OpenCvPipeline {
          */
         Mat region1_Cb;
         Mat region2_Cb;
+        Mat region1_Cr;
+        Mat region2_Cr;
         Mat YCrCb = new Mat();
+        Mat Cr = new Mat();
         Mat Cb = new Mat();
         int avg1;
         int avg2;
+        int avg3;
+        int avg4;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile boolean positionCenter = false;
@@ -74,6 +79,7 @@ public  class DetectionHelper extends OpenCvPipeline {
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
             Core.extractChannel(YCrCb, Cb, 1);
+            Core.extractChannel(YCrCb, Cr, 0);
         }
 
         @Override
@@ -83,6 +89,9 @@ public  class DetectionHelper extends OpenCvPipeline {
 
             region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
             region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+            region1_Cr = Cr.submat(new Rect(region1_pointA, region1_pointB));
+            region2_Cr = Cr.submat(new Rect(region2_pointA, region2_pointB));
+
         }
 
         @Override
@@ -92,7 +101,10 @@ public  class DetectionHelper extends OpenCvPipeline {
 
             avg1 = (int) Core.mean(region1_Cb).val[0];
             avg2 = (int) Core.mean(region2_Cb).val[0];
+            avg3 = (int) Core.mean(region1_Cr).val[0];
+            avg4 = (int) Core.mean(region2_Cr).val[0];
 
+            /*
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region1_pointA, // First point which defines the rectangle
@@ -106,6 +118,8 @@ public  class DetectionHelper extends OpenCvPipeline {
                     region2_pointB, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
+
+             */
 
             positionCenter = false; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD) {
@@ -127,14 +141,14 @@ public  class DetectionHelper extends OpenCvPipeline {
                     region1_pointA, // First point which defines the rectangle
                     region1_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    2); // Negative thickness means solid fill
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
                     region2_pointA, // First point which defines the rectangle
                     region2_pointB, // Second point which defines the rectangle
                     GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
+                    2); // Negative thickness means solid fill
 
             return input;
         }
