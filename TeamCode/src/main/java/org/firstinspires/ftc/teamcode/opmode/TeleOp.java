@@ -79,19 +79,6 @@ public class TeleOp extends LinearOpMode {
         arm.setPosition(0);
 
 
-/*
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
-        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
-
-        dumperServo = hardwareMap.get(Servo.class,"dumperServo");
-        dumperServo.setPosition(dumperIntaking);
-       // capServo = hardwareMap.get(Servo.class, "capServo");
-     //   capServo.setPosition(0.3);
-        position = 0.3;
-
- */
-
         //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFES WERE FLIPPED)
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -103,14 +90,7 @@ public class TeleOp extends LinearOpMode {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        /*
 
-        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-         */
 
 
     }
@@ -125,34 +105,73 @@ public class TeleOp extends LinearOpMode {
         public void run() {
             try {
                 while (!isInterrupted()) {
-                    if(gamepad1.dpad_up && dpadup_time.seconds() >= 0.25){
-                        dpadup_time.reset();
-                        currPos += targetPos;
-                        slideMotor.setTargetPosition(currPos);
-                        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        while(slideMotor.isBusy()){
-                            slideMotor.setPower(slidePower);
-                            telemetry.addData("encoder pos:", slideMotor.getCurrentPosition());
-                            telemetry.update();
+
+                    if (gamepad1.dpad_up) {
+
+                        arm.setPosition(0.99);
+                        try {
+                            sleep(1000);
+                        } catch (Exception e) {
+
                         }
-                        slideMotor.setPower(0);
+
                     }
-                    if(gamepad1.dpad_down && dpaddown_time.seconds() >= 0.25){
-                        dpaddown_time.reset();
-                        if(endGame){
-                            currPos-=500;
+
+                    if (gamepad1.dpad_down) {
+
+
+                        arm.setPosition(0);
+                        try {
+                            sleep(500);
+                        } catch (Exception e) {
+
                         }
-                        else{
-                            currPos = 0;
+                    }
+
+                    menaka.setPower(gamepad1.left_stick_x);
+
+                    if(gamepad1.b){
+                        menaka.setTargetPosition(1000);
+                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(menaka.isBusy()){
+                            menaka.setPower(0.7);
+
                         }
-                        slideMotor.setTargetPosition(currPos);
-                        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        while(slideMotor.isBusy()){
-                            slideMotor.setPower(-slidePower);
-                            telemetry.addData("encoder pos", slideMotor.getCurrentPosition());
-                            telemetry.update();
+                        menaka.setPower(0);
+                    }
+                    if(gamepad1.a){
+                        menaka.setTargetPosition(3000);
+                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(menaka.isBusy()){
+                            menaka.setPower(0.7);
+
                         }
-                        slideMotor.setPower(0);
+                        menaka.setPower(0);
+                    }
+
+                    if(gamepad1.x){
+                        menaka.setTargetPosition(-1000);
+                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(menaka.isBusy()){
+                            menaka.setPower(-0.7);
+                        }
+                        menaka.setPower(0);
+                    }
+
+                    if(gamepad1.y){
+                        int turn = menaka.getCurrentPosition();
+                        menaka.setTargetPosition(0);
+                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(menaka.isBusy()){
+                            if(turn>0){
+                                menaka.setPower(-0.7);
+                            }
+                            else{
+                                menaka.setPower(0.7);
+                            }
+
+                        }
+                        menaka.setPower(0);
                     }
 
 
@@ -166,43 +185,46 @@ public class TeleOp extends LinearOpMode {
 
 
         private void mecanumDrive(double scale){
+            double radius= Math.hypot(gamepad2.left_stick_x,gamepad2.left_stick_y);
+            double angle = (Math.atan2(-(gamepad2.left_stick_y),(gamepad2.left_stick_x)))-(Math.PI/4);
+            double rotation = gamepad2.right_stick_x * 0.5;
+            double fLPower = 0;
+            double bLPower = 0;
+            double fRPower = 0;
+            double bRPower = 0;
 
-        double radius= Math.hypot(gamepad2.left_stick_x,gamepad2.left_stick_y);
-        double angle = (Math.atan2(-(gamepad2.left_stick_y),(gamepad2.left_stick_x)))-(Math.PI/4);
-        double rotation = gamepad2.right_stick_x * 0.5;
-        double fLPower = 0;
-        double bLPower = 0;
-        double fRPower = 0;
-        double bRPower = 0;
+            if( (angle > 5*(Math.PI/12))&& (angle < 7*(Math.PI/12)) ){
+                double ratioCos=1;
+                double rationSin=1;
+                fLPower = radius * ratioCos - rotation;
+                bLPower = radius * rationSin - rotation;
+                fRPower = radius * ratioCos + rotation;
+                bRPower = radius * ratioCos + rotation;
+            }
+            else if( (angle < -5*(Math.PI/12))&& (angle > -7*(Math.PI/12)) ){
+                double ratioCos=1;
+                double rationSin=1;
+                fLPower = radius * ratioCos - rotation;
+                bLPower = radius * rationSin - rotation;
+                fRPower = radius * rationSin + rotation;
+                bRPower = radius * ratioCos + rotation;
+            }
+            else {
+                fLPower = radius * Math.cos(angle) + rotation;
+                bLPower = radius * Math.sin(angle) + rotation;
+                fRPower = radius * Math.sin(angle) - rotation;
+                bRPower = radius * Math.cos(angle) - rotation;
 
-        if( (angle > 5*(Math.PI/12))&& (angle < 7*(Math.PI/12)) ){
-            double ratioCos=1;
-            double rationSin=1;
-            fLPower = radius * ratioCos - rotation;
-            bLPower = radius * rationSin - rotation;
-            fRPower = radius * ratioCos + rotation;
-            bRPower = radius * ratioCos + rotation;
+            }
+            frontLeftMotor.setPower((fLPower) * scale);
+            backLeftMotor.setPower((bLPower) * scale);
+            frontRightMotor.setPower((fRPower) * scale);
+            backRightMotor.setPower((bRPower) * scale);
         }
-        else if( (angle < -5*(Math.PI/12))&& (angle > -7*(Math.PI/12)) ){
-            double ratioCos=1;
-            double rationSin=1;
-            fLPower = radius * ratioCos - rotation;
-            bLPower = radius * rationSin - rotation;
-            fRPower = radius * rationSin + rotation;
-            bRPower = radius * ratioCos + rotation;
-        }
-        else {
-            fLPower = radius * Math.cos(angle) + rotation;
-            bLPower = radius * Math.sin(angle) + rotation;
-            fRPower = radius * Math.sin(angle) - rotation;
-            bRPower = radius * Math.cos(angle) - rotation;
 
-        }
-        frontLeftMotor.setPower((fLPower) * scale);
-        backLeftMotor.setPower((bLPower) * scale);
-        frontRightMotor.setPower((fRPower) * scale);
-        backRightMotor.setPower((bRPower) * scale);
-    }
+
+
+    double positionArm = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -212,147 +234,15 @@ public class TeleOp extends LinearOpMode {
         //attachments.start();
         while(opModeIsActive()) {
 
-
-
-            /*
-            if(gamepad1.right_bumper && rb_time.seconds() >= 0.25){
-                telemetry.addLine("hit right bumper lol");
-                telemetry.update();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                rb_time.reset();
-                if(capUpp){
-                    capServo.setPosition(capDown);
-                    capUpp = false;
-                }
-                if(!capUpp){
-                    capServo.setPosition(capUp);
-                    capUpp = true;
-                }
-            }
-
-             */
-
-            /*if(gamepad1.y && y_time.seconds() >= 0.25){
-                y_time.reset();
-                if(!endGame){
-                    endGame = true;
-                    targetPos = 500;
-                    telemetry.addLine("endgame");
-                    telemetry.update();
-
-                }else{
-                    endGame = false;
-                    targetPos = 1200;
-                    telemetry.addLine("no endgame");
-                    telemetry.update();
-
-                }
-
-            }
-
-
-
-            if(gamepad2.dpad_up && dpadup2_time.seconds()>0.25){
-                dpadup2_time.reset();
-                slowMode=false;
-            }
-            if(gamepad2.dpad_down && dpaddown2_time.seconds()>0.25){
-                dpaddown2_time.reset();
-                slowMode=true;
-            }
-
-            if(gamepad2.x && x2_time.seconds()>0.25){
-                x2_time.reset();
-                if(!carouselOn){
-                    carousel.setPower(-0.65);
-                    carouselOn = true;
-                }
-                else{
-                    carousel.setPower(0.2);
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    carousel.setPower(0);
-                    carouselOn = false;
-                }
-            }
-
-            if(gamepad2.b && b2_time.seconds()>0.25){
-                b2_time.reset();
-                if(!carouselOn){
-                    carousel.setPower(0.65);
-                    carouselOn = true;
-                }
-                else{
-                    carousel.setPower(-0.2);
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    carousel.setPower(0);
-                    carouselOn = false;
-                }
-            }
-
-            if(gamepad2.right_bumper && dpadup_time.seconds()>0.25){
-                dpadup_time.reset();
-                if(!intakeOn){
-                    intake.setPower(0.8);
-                    intakeOn=true;
-                    extakeOn=false;
-                }
-                else{
-                    intake.setPower(0);
-                    intakeOn=false;
-                    extakeOn=false;
-                }
-            }
-            if(gamepad1.left_bumper && dpaddown_time.seconds()>0.25){
-                dpaddown_time.reset();
-                if(!extakeOn){
-                    intake.setPower(-0.8);
-                    extakeOn=true;
-                    intakeOn=false;
-                }
-                else{
-                    intake.setPower(0);
-                    extakeOn=false;
-                    intakeOn=false;
-                }
-            }
-
-            if(gamepad1.b&&b_time.seconds()>0.25){
-                b_time.reset();
-                dumperServo.setPosition(dumperDump);
-            }
-            if(gamepad1.a&&a_time.seconds()>0.25){
-                a_time.reset();
-                dumperServo.setPosition(dumperGoingUp);
-            }
-            if(gamepad1.x&&x_time.seconds()>0.25){
-                x_time.reset();
-                dumperServo.setPosition(dumperIntaking);
-            }
-
-
-            if (gamepad2.y && y_time.seconds() > 0.25) {
-                y_time.reset();
-
-
-
-                turnTest(90, 0.5);
-            }
-
-             */
-
             if (gamepad1.dpad_up) {
+                position-=0.1;
+                arm.setPosition(position);
+                try {
+                    sleep(1000);
+                } catch (Exception e) {
+
+                }
+                /*
 
                 arm.setPosition(0.99);
                 try {
@@ -361,58 +251,82 @@ public class TeleOp extends LinearOpMode {
 
                 }
 
+                 */
+
             }
 
             if (gamepad1.dpad_down) {
+                position+=0.1;
+                arm.setPosition(position);
+                try {
+                    sleep(1000);
+                } catch (Exception e) {
 
-
+                }
+                /*
                 arm.setPosition(0);
                 try {
                     sleep(500);
                 } catch (Exception e) {
 
                 }
+
+                 */
             }
 
-            menaka.setPower(gamepad1.left_stick_x);
+            telemetry.addData("arm pos: ", position);
+            telemetry.update();
+
 
             if(gamepad1.b){
-                menaka.setTargetPosition(1000);
+                menaka.setTargetPosition(666);
                 menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while(menaka.isBusy()){
-                    menaka.setPower(0.3);
+                    menaka.setPower(0.7);
+
+                }
+                menaka.setPower(0);
+            }
+            if(gamepad1.a){
+                menaka.setTargetPosition(1400);
+                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while(menaka.isBusy()){
+                    menaka.setPower(0.7);
 
                 }
                 menaka.setPower(0);
             }
 
             if(gamepad1.x){
-                menaka.setTargetPosition(-1000);
+                menaka.setTargetPosition(-666);
                 menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while(menaka.isBusy()){
-                    menaka.setPower(-0.3);
+                    menaka.setPower(-0.7);
                 }
                 menaka.setPower(0);
             }
 
-            if(gamepad1.a){
+            if(gamepad1.y){
                 int turn = menaka.getCurrentPosition();
                 menaka.setTargetPosition(0);
                 menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while(menaka.isBusy()){
                     if(turn>0){
-                        menaka.setPower(-0.3);
+                        menaka.setPower(-0.7);
                     }
                     else{
-                        menaka.setPower(0.3);
+                        menaka.setPower(0.7);
                     }
 
                 }
                 menaka.setPower(0);
             }
 
+            if(gamepad2.dpad_down){
+                slowMode=true;
+            }
 
-                if (slowMode) {
+            if (slowMode) {
                     //telemetry.addData("speed", 0.35);
                     //telemetry.update();
                     mecanumDrive(0.35);
@@ -421,11 +335,10 @@ public class TeleOp extends LinearOpMode {
                     //telemetry.update();
                     mecanumDrive(1);
                 }
+                idle();
 
-                telemetry.addData("imu:", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,
-                        AngleUnit.DEGREES).firstAngle);
-                telemetry.update();
             }
+        //attachments.interrupt();
         }
 
     public void turnTest(double turn, double speed){
