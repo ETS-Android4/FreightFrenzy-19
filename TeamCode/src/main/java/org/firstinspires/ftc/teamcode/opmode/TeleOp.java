@@ -20,40 +20,16 @@ public class TeleOp extends LinearOpMode {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     DcMotor frontLeftMotor;
-    DcMotor slideMotor;
+    DcMotor wijeratne;
     DcMotor menaka;
-    Servo dumperServo;
-  //  Servo capServo;
     Servo arm;
     BNO055IMU imu;
-    final double dumperDump = 0.6;
-    final double dumperGoingUp = 0.67;
-    //0.8
-    final double dumperIntaking = 0.83;
-    final double slidePower = 0.95;
-    final double capDown = 0.75;
-    final double capUp = 0.45;
     double position;
-    int currPos = 0;
-    int targetPos = 1300;
-    ElapsedTime a_time = new ElapsedTime();
-    ElapsedTime b2_time = new ElapsedTime();
-    ElapsedTime x2_time = new ElapsedTime();
-    ElapsedTime b_time = new ElapsedTime();
-    ElapsedTime x_time = new ElapsedTime();
-    ElapsedTime y_time = new ElapsedTime();
-    ElapsedTime rb_time = new ElapsedTime();
-    ElapsedTime dpadup_time = new ElapsedTime();
-    ElapsedTime dpaddown_time = new ElapsedTime();
-    ElapsedTime dpadup2_time = new ElapsedTime();
-    ElapsedTime dpaddown2_time = new ElapsedTime();
-    boolean intakeOn = false;
-    boolean extakeOn = false;
-    boolean carouselOn = false;
-    boolean slowMode = false;
-    boolean endGame = false;
-    boolean capUpp = true;
-
+    boolean slowMode;
+    boolean intakeOn;
+    boolean extakeOn;
+    ElapsedTime left_bumper = new ElapsedTime();
+    ElapsedTime right_bumper = new ElapsedTime();
     public void initialize(){
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -69,15 +45,15 @@ public class TeleOp extends LinearOpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
 
+        wijeratne = hardwareMap.get(DcMotor.class, "wijeratne");
+
         menaka = hardwareMap.get(DcMotor.class, "menaka");
         menaka.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         menaka.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         menaka.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         arm = hardwareMap.get(Servo.class, "arm");
         arm.setPosition(0);
-
 
         //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFES WERE FLIPPED)
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -90,8 +66,8 @@ public class TeleOp extends LinearOpMode {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-
+        intakeOn = false;
+        extakeOn = false;
 
     }
 
@@ -107,40 +83,60 @@ public class TeleOp extends LinearOpMode {
                 while (!isInterrupted()) {
 
                     if (gamepad1.dpad_up) {
-
-                        arm.setPosition(0.99);
+                        position=0.1;
+                        arm.setPosition(position);
                         try {
                             sleep(1000);
                         } catch (Exception e) {
 
                         }
-
                     }
 
-                    if (gamepad1.dpad_down) {
+                    if(gamepad1.dpad_right) {
+                        position = 0.98;
+                        arm.setPosition(position);
+                        try{
+                            sleep(1000);
 
-
-                        arm.setPosition(0);
-                        try {
-                            sleep(500);
                         } catch (Exception e) {
 
                         }
                     }
 
-                    menaka.setPower(gamepad1.left_stick_x);
+                    if (gamepad1.dpad_down) {
+                        position=0.9;
+                        arm.setPosition(position);
+                        try {
+                            sleep(1000);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                    if(gamepad1.dpad_left){
+                        position = 0.45;
+                        arm.setPosition(position);
+                        try{
+                            sleep(1000);
+                        } catch (Exception e){
+
+                        }
+                    }
+
+                    telemetry.addData("arm pos: ", position);
+                    telemetry.update();
 
                     if(gamepad1.b){
-                        menaka.setTargetPosition(1000);
+                        menaka.setTargetPosition(625);
                         menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        int movement = Math.abs(menaka.getCurrentPosition()-625);
                         while(menaka.isBusy()){
-                            menaka.setPower(0.7);
-
+                            int fraction = Math.abs((menaka.getCurrentPosition()-625)/movement);
+                            menaka.setPower(fraction*0.3+0.6);
                         }
                         menaka.setPower(0);
                     }
-                    if(gamepad1.a){
-                        menaka.setTargetPosition(3000);
+                    if(gamepad1.y){
+                        menaka.setTargetPosition(1400);
                         menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         while(menaka.isBusy()){
                             menaka.setPower(0.7);
@@ -150,15 +146,17 @@ public class TeleOp extends LinearOpMode {
                     }
 
                     if(gamepad1.x){
-                        menaka.setTargetPosition(-1000);
+                        menaka.setTargetPosition(-625);
                         menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        int movement = Math.abs(menaka.getCurrentPosition()+625);
                         while(menaka.isBusy()){
-                            menaka.setPower(-0.7);
+                            int fraction = Math.abs((menaka.getCurrentPosition()+625)/movement);
+                            menaka.setPower(fraction*-0.3+0.6);
                         }
                         menaka.setPower(0);
                     }
 
-                    if(gamepad1.y){
+                    if(gamepad1.a){
                         int turn = menaka.getCurrentPosition();
                         menaka.setTargetPosition(0);
                         menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -174,7 +172,33 @@ public class TeleOp extends LinearOpMode {
                         menaka.setPower(0);
                     }
 
+                    if(gamepad2.right_bumper && right_bumper.seconds()>0.25){
+                        right_bumper.reset();
+                        if(!intakeOn){
+                            wijeratne.setPower(0.7);
+                            intakeOn=true;
+                            extakeOn=false;
+                        }
+                        else{
+                            wijeratne.setPower(0);
+                            intakeOn=false;
+                            extakeOn=false;
+                        }
+                    }
 
+                    if(gamepad1.left_bumper && left_bumper.seconds()>0.25){
+                        left_bumper.reset();
+                        if(!extakeOn){
+                            wijeratne.setPower(-0.5);
+                            extakeOn=true;
+                            intakeOn=false;
+                        }
+                        else{
+                            wijeratne.setPower(0);
+                            extakeOn=false;
+                            intakeOn=false;
+                        }
+                    }
                 }
                     idle();
             } catch (Exception e) {
@@ -229,98 +253,10 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
-        //Thread attachments = new TeleOp.AttachmentsThread();
+        Thread attachments = new TeleOp.AttachmentsThread();
         waitForStart();
-        //attachments.start();
+        attachments.start();
         while(opModeIsActive()) {
-
-            if (gamepad1.dpad_up) {
-                position-=0.1;
-                arm.setPosition(position);
-                try {
-                    sleep(1000);
-                } catch (Exception e) {
-
-                }
-                /*
-
-                arm.setPosition(0.99);
-                try {
-                    sleep(1000);
-                } catch (Exception e) {
-
-                }
-
-                 */
-
-            }
-
-            if (gamepad1.dpad_down) {
-                position+=0.1;
-                arm.setPosition(position);
-                try {
-                    sleep(1000);
-                } catch (Exception e) {
-
-                }
-                /*
-                arm.setPosition(0);
-                try {
-                    sleep(500);
-                } catch (Exception e) {
-
-                }
-
-                 */
-            }
-
-            telemetry.addData("arm pos: ", position);
-            telemetry.update();
-
-
-            if(gamepad1.b){
-                menaka.setTargetPosition(666);
-                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while(menaka.isBusy()){
-                    menaka.setPower(0.7);
-
-                }
-                menaka.setPower(0);
-            }
-            if(gamepad1.a){
-                menaka.setTargetPosition(1400);
-                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while(menaka.isBusy()){
-                    menaka.setPower(0.7);
-
-                }
-                menaka.setPower(0);
-            }
-
-            if(gamepad1.x){
-                menaka.setTargetPosition(-666);
-                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while(menaka.isBusy()){
-                    menaka.setPower(-0.7);
-                }
-                menaka.setPower(0);
-            }
-
-            if(gamepad1.y){
-                int turn = menaka.getCurrentPosition();
-                menaka.setTargetPosition(0);
-                menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                while(menaka.isBusy()){
-                    if(turn>0){
-                        menaka.setPower(-0.7);
-                    }
-                    else{
-                        menaka.setPower(0.7);
-                    }
-
-                }
-                menaka.setPower(0);
-            }
 
             if(gamepad2.dpad_down){
                 slowMode=true;
@@ -338,7 +274,7 @@ public class TeleOp extends LinearOpMode {
                 idle();
 
             }
-        //attachments.interrupt();
+        attachments.interrupt();
         }
 
     public void turnTest(double turn, double speed){
