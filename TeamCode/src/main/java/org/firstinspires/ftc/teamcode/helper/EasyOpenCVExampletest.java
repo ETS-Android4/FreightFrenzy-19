@@ -79,10 +79,18 @@ public class EasyOpenCVExampletest extends LinearOpMode
 
         while (opModeIsActive())
         {
+            telemetry.addData("Cb1",pipeline.getAnalysis()[0]);
+            telemetry.addData("Cr1",pipeline.getAnalysis()[1]);
+            telemetry.addData("Cb2", pipeline.getAnalysis()[2]);
+            telemetry.addData("Cr2", pipeline.getAnalysis()[3]);
+            telemetry.update();
+            /*
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("center: ", pipeline.positionCenter);
             telemetry.addData("right", pipeline.positionRight);
             telemetry.update();
+
+             */
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);

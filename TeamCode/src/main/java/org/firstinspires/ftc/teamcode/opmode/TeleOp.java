@@ -20,8 +20,8 @@ public class TeleOp extends LinearOpMode {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     DcMotor frontLeftMotor;
-    DcMotor wijeratne;
-    DcMotor menaka;
+    DcMotor pivot;
+    DcMotor intake;
     Servo arm;
     BNO055IMU imu;
     double position;
@@ -45,12 +45,12 @@ public class TeleOp extends LinearOpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
 
-        wijeratne = hardwareMap.get(DcMotor.class, "wijeratne");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
-        menaka = hardwareMap.get(DcMotor.class, "menaka");
-        menaka.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        menaka.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        menaka.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivot = hardwareMap.get(DcMotor.class, "pivot");
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         arm = hardwareMap.get(Servo.class, "arm");
         arm.setPosition(0);
@@ -126,61 +126,61 @@ public class TeleOp extends LinearOpMode {
                     telemetry.update();
 
                     if(gamepad1.b){
-                        menaka.setTargetPosition(625);
-                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        int movement = Math.abs(menaka.getCurrentPosition()-625);
-                        while(menaka.isBusy()){
-                            int fraction = Math.abs((menaka.getCurrentPosition()-625)/movement);
-                            menaka.setPower(fraction*0.3+0.6);
+                        pivot.setTargetPosition(625);
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        int movement = Math.abs(pivot.getCurrentPosition()-625);
+                        while(pivot.isBusy()){
+                            int fraction = Math.abs((pivot.getCurrentPosition()-625)/movement);
+                            pivot.setPower(fraction*0.3+0.6);
                         }
-                        menaka.setPower(0);
+                        pivot.setPower(0);
                     }
                     if(gamepad1.y){
-                        menaka.setTargetPosition(1400);
-                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        while(menaka.isBusy()){
-                            menaka.setPower(0.7);
+                        pivot.setTargetPosition(1400);
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(pivot.isBusy()){
+                            pivot.setPower(0.7);
 
                         }
-                        menaka.setPower(0);
+                        pivot.setPower(0);
                     }
 
                     if(gamepad1.x){
-                        menaka.setTargetPosition(-625);
-                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        int movement = Math.abs(menaka.getCurrentPosition()+625);
-                        while(menaka.isBusy()){
-                            int fraction = Math.abs((menaka.getCurrentPosition()+625)/movement);
-                            menaka.setPower(fraction*-0.3+0.6);
+                        pivot.setTargetPosition(-625);
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        int movement = Math.abs(pivot.getCurrentPosition()+625);
+                        while(pivot.isBusy()){
+                            int fraction = Math.abs((pivot.getCurrentPosition()+625)/movement);
+                            pivot.setPower(fraction*-0.3+0.6);
                         }
-                        menaka.setPower(0);
+                        pivot.setPower(0);
                     }
 
                     if(gamepad1.a){
-                        int turn = menaka.getCurrentPosition();
-                        menaka.setTargetPosition(0);
-                        menaka.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        while(menaka.isBusy()){
+                        int turn = pivot.getCurrentPosition();
+                        pivot.setTargetPosition(0);
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(pivot.isBusy()){
                             if(turn>0){
-                                menaka.setPower(-0.7);
+                                pivot.setPower(-0.7);
                             }
                             else{
-                                menaka.setPower(0.7);
+                                pivot.setPower(0.7);
                             }
 
                         }
-                        menaka.setPower(0);
+                        pivot.setPower(0);
                     }
 
                     if(gamepad2.right_bumper && right_bumper.seconds()>0.25){
                         right_bumper.reset();
                         if(!intakeOn){
-                            wijeratne.setPower(0.7);
+                            intake.setPower(0.7);
                             intakeOn=true;
                             extakeOn=false;
                         }
                         else{
-                            wijeratne.setPower(0);
+                            intake.setPower(0);
                             intakeOn=false;
                             extakeOn=false;
                         }
@@ -189,12 +189,12 @@ public class TeleOp extends LinearOpMode {
                     if(gamepad1.left_bumper && left_bumper.seconds()>0.25){
                         left_bumper.reset();
                         if(!extakeOn){
-                            wijeratne.setPower(-0.5);
+                            intake.setPower(-0.89);
                             extakeOn=true;
                             intakeOn=false;
                         }
                         else{
-                            wijeratne.setPower(0);
+                            intake.setPower(0);
                             extakeOn=false;
                             intakeOn=false;
                         }
