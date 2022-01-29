@@ -28,7 +28,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
     DcMotor backLeft;
     DcMotor backRight;
     DcMotor intake;
-    DcMotor carousel;
+   // DcMotor carousel;
     DcMotor slideMotor;
     Servo dumperServo;
     //Servo capServo;
@@ -280,7 +280,7 @@ public class AutoRedNearUpdated extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        carousel = hardwareMap.get(DcMotor.class, "carousel");
+     //   carousel = hardwareMap.get(DcMotor.class, "carousel");
         dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
         //capServo = hardwareMap.get(Servo.class, "capServo");

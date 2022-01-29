@@ -20,6 +20,21 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name="AUTO ALL", group="auto")
 public class AutoAll extends LinearOpMode {
 
+    private enum State {
+
+        //init states
+        INIT_ONE,
+        INIT_TWO,
+        INIT_THREE,
+
+        //main program states
+        STATE_ONE,
+        STATE_TWO,
+        STATE_THREE,
+
+        //add booleans for completed paths
+    }
+
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -31,6 +46,8 @@ public class AutoAll extends LinearOpMode {
     float header;
 
     ColorSensor frontColor;
+
+    private State currentState;
 
     final double dumperDump = 0.35;
     final double dumperGoingUp = 0.65;
@@ -71,6 +88,7 @@ public class AutoAll extends LinearOpMode {
             position = pipeline.getPosition();
             if(position== DetectionHelper.DuckPosition.LEFT){
                 telemetry.addData("Position", "LEFT");
+
             }
             else if(position == DetectionHelper.DuckPosition.CENTER){
                 telemetry.addData("Position", "CENTER");
@@ -219,5 +237,7 @@ public class AutoAll extends LinearOpMode {
             sensorHelper.untilRed(backLeft, backRight, frontRight, frontLeft, telemetry, imu, frontColor);
         }
     }
+
+
 
 }

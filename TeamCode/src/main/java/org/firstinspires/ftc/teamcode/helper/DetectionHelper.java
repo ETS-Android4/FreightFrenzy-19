@@ -29,13 +29,13 @@ public  class DetectionHelper extends OpenCvPipeline {
          * The core values which define the location and size of the sample regions
          */
         //x181
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(30,160);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(233,160 );
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(40,160);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(213,160 );
 
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;
 
-        final int FOUR_RING_THRESHOLD = 140;
+        final int FOUR_RING_THRESHOLD = 50;
         final int ONE_RING_THRESHOLD = 135;
 
         Point region1_pointA = new Point(
@@ -122,14 +122,14 @@ public  class DetectionHelper extends OpenCvPipeline {
              */
 
             positionCenter = false; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD) {
+            if(avg3 < FOUR_RING_THRESHOLD) {
                 positionCenter = true;
             } else{
                 positionCenter = false;
             }
 
             positionRight = false; // Record our analysis
-            if(avg2 > FOUR_RING_THRESHOLD) {
+            if(avg4 < FOUR_RING_THRESHOLD) {
                 positionRight = true;
             } else{
                 positionRight = false;
@@ -167,7 +167,7 @@ public  class DetectionHelper extends OpenCvPipeline {
 
         public int[] getAnalysis()
         {
-            int[] analysis = {avg1, avg2};
+            int[] analysis = {avg1, avg2, avg3, avg4};
             return analysis;
         }
     }

@@ -24,7 +24,6 @@ package org.firstinspires.ftc.teamcode.helper;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -37,8 +36,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp (name = "opencv tester test fr", group = "tester")
-public class EasyOpenCVExampletest extends LinearOpMode
+@TeleOp (name = "bad opencv tester test fr", group = "tester")
+public class problematicEasyOpenCVExampletest extends LinearOpMode
 {
     OpenCvCamera webcam;
     SkystoneDeterminationPipeline pipeline;
@@ -67,6 +66,8 @@ public class EasyOpenCVExampletest extends LinearOpMode
             @Override
             public void onError(int errorCode)
             {
+                System.out.println("made it here");
+
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -79,22 +80,20 @@ public class EasyOpenCVExampletest extends LinearOpMode
 
         while (opModeIsActive())
         {
-           /* telemetry.addData("Cb1",pipeline.getAnalysis()[0]);
-            telemetry.addData("Cr1",pipeline.getAnalysis()[2]);
-            telemetry.addData("Cb2", pipeline.getAnalysis()[1]);
-            telemetry.addData("Cr2", pipeline.getAnalysis()[3]);
-
-
+            telemetry.addData("Y",pipeline.getAnalysis()[0]);
+            telemetry.addData("Cr",pipeline.getAnalysis()[2]);
+            telemetry.addData("Cb", pipeline.getAnalysis()[4]);
+            telemetry.addData("Y", pipeline.getAnalysis()[1]);
+            telemetry.addData("Cr", pipeline.getAnalysis()[3]);
+            telemetry.addData("Cb", pipeline.getAnalysis()[5]);
             telemetry.update();
-
-            */
-
+            /*
             telemetry.addData("Analysis", pipeline.getAnalysis());
             telemetry.addData("center: ", pipeline.positionCenter);
             telemetry.addData("right", pipeline.positionRight);
             telemetry.update();
 
-
+             */
 
             // Don't burn CPU cycles busy-looping in this sample
             sleep(50);
@@ -123,14 +122,14 @@ public class EasyOpenCVExampletest extends LinearOpMode
          */
         //y:135
         //left
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(40,160);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(50,160);
         //right
         static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(213,160);
 
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;
 
-        final int FOUR_RING_THRESHOLD = 50;
+        final int FOUR_RING_THRESHOLD = 140;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -149,17 +148,23 @@ public class EasyOpenCVExampletest extends LinearOpMode
         /*
          * Working variables
          */
-        Mat region1_Cb;
-        Mat region2_Cb;
+        Mat region1_Y;
+        Mat region2_Y;
         Mat region1_Cr;
         Mat region2_Cr;
+        Mat region1_Cb;
+        Mat region2_Cb;
         Mat YCrCb = new Mat();
+        Mat Y = new Mat();
         Mat Cr = new Mat();
         Mat Cb = new Mat();
+
         int avg1;
         int avg2;
         int avg3;
         int avg4;
+        int avg5;
+        int avg6;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile DuckPosition positionCenter = DuckPosition.FALSE;
@@ -172,8 +177,9 @@ public class EasyOpenCVExampletest extends LinearOpMode
         void inputToCb(Mat input)
         {
             Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 1);
-            Core.extractChannel(YCrCb, Cr, 0);
+            Core.extractChannel(YCrCb, Y, 0);
+            Core.extractChannel(YCrCb, Cr, 1);
+            Core.extractChannel(YCrCb, Cb, 2);
 
         }
 
@@ -182,10 +188,12 @@ public class EasyOpenCVExampletest extends LinearOpMode
         {
             inputToCb(firstFrame);
 
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
+            region1_Y = Y.submat(new Rect(region1_pointA, region1_pointB));
+            region1_Y = Y.submat(new Rect(region2_pointA, region2_pointB));
             region1_Cr = Cr.submat(new Rect(region1_pointA, region1_pointB));
             region2_Cr = Cr.submat(new Rect(region2_pointA, region2_pointB));
+            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+            region2_Cb = Cb.submat(new Rect(region2_pointA, region2_pointB));
         }
 
         @Override
@@ -193,10 +201,14 @@ public class EasyOpenCVExampletest extends LinearOpMode
         {
             inputToCb(input);
 
-            avg1 = (int) Core.mean(region1_Cb).val[0];
-            avg2 = (int) Core.mean(region2_Cb).val[0];
+
+            avg1 = (int) Core.mean(region1_Y).val[0];
+            avg2 = (int) Core.mean(region2_Y).val[0];
             avg3 = (int) Core.mean(region1_Cr).val[0];
             avg4 = (int) Core.mean(region2_Cr).val[0];
+            avg5 = (int) Core.mean(region1_Cb).val[0];
+            avg6 = (int) Core.mean(region2_Cb).val[0];
+
 
             /*
             Imgproc.rectangle(
@@ -216,14 +228,14 @@ public class EasyOpenCVExampletest extends LinearOpMode
              */
 
             positionCenter = DuckPosition.FALSE; // Record our analysis
-            if(avg3 < FOUR_RING_THRESHOLD) {
+            if(avg1 > FOUR_RING_THRESHOLD) {
                 positionCenter = DuckPosition.TRUE;
             } else{
                 positionCenter = DuckPosition.FALSE;
             }
 
             positionRight = DuckPosition.FALSE; // Record our analysis
-            if(avg4 < FOUR_RING_THRESHOLD) {
+            if(avg2 > FOUR_RING_THRESHOLD) {
                 positionRight = DuckPosition.TRUE;
             } else{
                 positionRight = DuckPosition.FALSE;
@@ -251,13 +263,11 @@ public class EasyOpenCVExampletest extends LinearOpMode
 
         public int[] getAnalysis()
         {
-            int[] analysis = {avg1, avg2, avg3, avg4};
+            int[] analysis = {avg1, avg2, avg3, avg4, avg5, avg6};
 
 
 
             return analysis;
         }
-
-
     }
 }

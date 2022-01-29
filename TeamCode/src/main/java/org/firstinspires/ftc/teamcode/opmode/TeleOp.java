@@ -61,10 +61,10 @@ public class TeleOp extends LinearOpMode {
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intakeOn = false;
         extakeOn = false;
@@ -217,6 +217,7 @@ public class TeleOp extends LinearOpMode {
             double fRPower = 0;
             double bRPower = 0;
 
+            /*
             if( (angle > 5*(Math.PI/12))&& (angle < 7*(Math.PI/12)) ){
                 double ratioCos=1;
                 double rationSin=1;
@@ -240,6 +241,13 @@ public class TeleOp extends LinearOpMode {
                 bRPower = radius * Math.cos(angle) - rotation;
 
             }
+
+             */
+            fLPower = radius * Math.cos(angle) + rotation;
+            bLPower = radius * Math.sin(angle) + rotation;
+            fRPower = radius * Math.sin(angle) - rotation;
+            bRPower = radius * Math.cos(angle) - rotation;
+
             frontLeftMotor.setPower((fLPower) * scale);
             backLeftMotor.setPower((bLPower) * scale);
             frontRightMotor.setPower((fRPower) * scale);
@@ -271,7 +279,7 @@ public class TeleOp extends LinearOpMode {
                     //telemetry.update();
                     mecanumDrive(1);
                 }
-                idle();
+
 
             }
         attachments.interrupt();
