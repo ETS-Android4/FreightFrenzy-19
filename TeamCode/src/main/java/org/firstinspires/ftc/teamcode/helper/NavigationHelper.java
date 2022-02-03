@@ -20,7 +20,7 @@ public class NavigationHelper {
     //LinearOpMode opm = new LinearOpMode() {
 
     // This method tells us - Based on the direction we want to move(STRAIGHT,LEFT,RIGHT,TURN), it will call the needed method with parameters
-    public void navigate (double pTgtDistance, Constants2022.Direction pDirection, double pRotation, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, BNO055IMU pImu, Telemetry telemetry, float header, boolean isForward ){
+    public void navigate (double pTgtDistance, Constants2022.Direction pDirection, double pRotation, double pSpeed, DcMotor pBackLeft, DcMotor pBackRight, DcMotor pFrontRight, DcMotor pFrontLeft, BNO055IMU pImu, Telemetry telemetry, boolean isForward ){
 
         if(pDirection.equals(Constants2022.Direction.STRAIGHT)){
             forwardDrive(pTgtDistance, pSpeed, pBackLeft, pBackRight, pFrontRight, pFrontLeft, telemetry, pImu, isForward );

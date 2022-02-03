@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="AUTO BLUE NEAR v2", group="auto")
-
+//@Autonomous(name="AUTO BLUE NEAR v2", group="auto")
+/*
 public class AutoBlueNearUpdated extends LinearOpMode {
 
     DcMotor frontLeft;
@@ -229,9 +229,6 @@ public class AutoBlueNearUpdated extends LinearOpMode {
                 @Override
                 public void onError(int errorCode)
                 {
-                    /*
-                     * This will be called if the camera could not be opened
-                     */
                 }
             });
 
@@ -283,6 +280,8 @@ public class AutoBlueNearUpdated extends LinearOpMode {
     }
 
 }
+
+ */
 
 
 

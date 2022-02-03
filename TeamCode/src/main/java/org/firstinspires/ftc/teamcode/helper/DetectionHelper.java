@@ -36,7 +36,6 @@ public  class DetectionHelper extends OpenCvPipeline {
         static final int REGION_HEIGHT = 25;
 
         final int FOUR_RING_THRESHOLD = 50;
-        final int ONE_RING_THRESHOLD = 135;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,

@@ -33,7 +33,7 @@ public class GoForwardEasy extends LinearOpMode {
 
             waitForStart();
 
-            navigate.navigate(50, Constants2022.Direction.RIGHT, 0, -0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
+          //  navigate.navigate(50, Constants2022.Direction.RIGHT, 0, -0.3, backLeft, backRight, frontRight, frontLeft, imu, telemetry, header, true);
 
             frontLeft.setPower(0);
             frontRight.setPower(0);

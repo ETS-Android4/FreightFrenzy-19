@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="AUTO BLUE FAR test v1", group="auto")
-
+//@Autonomous(name="AUTO BLUE FAR test v1", group="auto")
+/*
 public class AutoBlueFarUpdated extends LinearOpMode {
 
     DcMotor frontLeft;
@@ -271,7 +271,7 @@ public class AutoBlueFarUpdated extends LinearOpMode {
             navigate.navigate(-75, Constants2022.Direction.STRAIGHT,0, 0.98,backLeft,backRight,frontRight,frontLeft,imu, telemetry, header,true);
 
 
-             */
+
             break;
         }
     }
@@ -302,9 +302,6 @@ public class AutoBlueFarUpdated extends LinearOpMode {
                 @Override
                 public void onError(int errorCode)
                 {
-                    /*
-                     * This will be called if the camera could not be opened
-                     */
                 }
             });
 
@@ -350,6 +347,7 @@ public class AutoBlueFarUpdated extends LinearOpMode {
     }
 
 }
+*/
 
 
 
