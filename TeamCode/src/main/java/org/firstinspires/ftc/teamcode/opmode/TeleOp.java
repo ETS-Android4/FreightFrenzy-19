@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,8 +19,10 @@ public class TeleOp extends LinearOpMode {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     DcMotor frontLeftMotor;
+    DcMotor alexCarushow;
     DcMotor pivot;
     DcMotor intake;
+    Servo dumperServo;
     Servo arm;
     Servo dump;
 
@@ -30,9 +31,14 @@ public class TeleOp extends LinearOpMode {
     boolean slowMode;
     boolean intakeOn;
     boolean extakeOn;
+    boolean boxUp;
     boolean dumpPressed;
+    boolean carouselTurn = false;
     ElapsedTime left_bumper = new ElapsedTime();
-    ElapsedTime right_bumper = new ElapsedTime();
+    ElapsedTime right_bumper_time = new ElapsedTime();
+    ElapsedTime right_bumper_time2 = new ElapsedTime();
+    ElapsedTime b_time = new ElapsedTime();
+    ElapsedTime x_time = new ElapsedTime();
     public void initialize(){
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -48,22 +54,23 @@ public class TeleOp extends LinearOpMode {
         backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
 
+        //alexCarushow = hardwareMap.get(DcMotor.class, "carousel");
         intake = hardwareMap.get(DcMotor.class, "intake");
-
+        dumperServo = hardwareMap.get(Servo.class,"dumperServo");
         pivot = hardwareMap.get(DcMotor.class, "pivot");
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         arm = hardwareMap.get(Servo.class, "arm");
-        arm.setPosition(0);
+        arm.setPosition(1);
 
-        dump = hardwareMap.get(Servo.class, "dump");
-        dump.setPosition(0.2);
-
+        dumperServo.setPosition(0.75);
 
 
-        //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFES WERE FLIPPED)
+
+
+        //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFExcS WERE FLIPPED)
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -77,6 +84,7 @@ public class TeleOp extends LinearOpMode {
         intakeOn = false;
         extakeOn = false;
         dumpPressed = false;
+        boxUp = false;
 
     }
 
@@ -92,9 +100,34 @@ public class TeleOp extends LinearOpMode {
                 while (!isInterrupted()) {
 
 
+                    if(gamepad2.b && b_time.seconds()>0.25){
+                        b_time.reset();
+                        if(!carouselTurn){
+                            carouselTurn = true;
+                            alexCarushow.setPower(0.5);
+                        }
+                        else{
+                            carouselTurn = false;
+                            alexCarushow.setPower(0);
+                        }
+
+                    }
+                    if(gamepad2.x && x_time.seconds()>0.25){
+                        x_time.reset();
+                        if(!carouselTurn){
+                            carouselTurn=true;
+                            alexCarushow.setPower(-0.5);
+                        }
+                        else{
+                            carouselTurn = false;
+                            alexCarushow.setPower(0);
+                        }
+                    }
+
+
 
                     if (gamepad1.dpad_up) {
-                        position=0.1;
+                        position=0.01;
                         arm.setPosition(position);
                         try {
                             sleep(1000);
@@ -104,7 +137,7 @@ public class TeleOp extends LinearOpMode {
                     }
 
                     if(gamepad1.dpad_right) {
-                        position = 0.98;
+                        position = 1;
                         arm.setPosition(position);
                         try{
                             sleep(1000);
@@ -124,13 +157,30 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
-                    if (gamepad2.right_bumper) {
-                        dump.setPosition(0.6);
-                        try{
-                            sleep(1000);
+                    if (gamepad2.right_bumper && right_bumper_time2.seconds()>0.25) {
+                        right_bumper_time2.reset();
+                        intake.setPower(0.6);
+                        if(intakeOn==false){
+                            intake.setPower(0.6);
+                            intakeOn=true;
+                            extakeOn=false;
+                        }
+                        else{
+                            intake.setPower(0);
+                            extakeOn=false;
+                            intakeOn=false;
+                        }
+                    }
 
-                        } catch (Exception e) {
-
+                    if(gamepad1.right_bumper && right_bumper_time.seconds()>0.25){
+                        right_bumper_time.reset();
+                        if (boxUp==false){
+                            dumperServo.setPosition(0.9);
+                            boxUp = true;
+                        }
+                        else{
+                            dumperServo.setPosition(0.7);
+                            boxUp = false;
                         }
                     }
 
@@ -157,7 +207,6 @@ public class TeleOp extends LinearOpMode {
 
                     telemetry.addData("arm pos: ", position);
                     telemetry.update();
-
 
                     if(gamepad1.b){
                         pivot.setTargetPosition(625);
@@ -204,48 +253,6 @@ public class TeleOp extends LinearOpMode {
 
                         }
                         pivot.setPower(0);
-                    }
-
-                  /*  if(gamepad2.left_bumper & left_bumper.seconds()>0.25) {
-                        left_bumper.reset();
-                        if(!dumpPressed) {
-                            dump.setPosition(0.8);
-                            try {
-                                sleep(1000);
-                            } catch (Exception e) {
-
-                            }
-                            dumpPressed = true;
-                        }
-
-
-                        else {
-                            dump.setPosition(0.6);
-                            try {
-                                sleep(1000);
-                            } catch (Exception e) {
-
-                            }
-                            dumpPressed = false;
-
-                        }
-                    }
-
-                   */
-
-
-                    if(gamepad1.right_bumper && right_bumper.seconds()>0.25){
-                        right_bumper.reset();
-                        if(!intakeOn){
-                            intake.setPower(0.7);
-                            intakeOn=true;
-                            extakeOn=false;
-                        }
-                        else{
-                            intake.setPower(0);
-                            intakeOn=false;
-                            extakeOn=false;
-                        }
                     }
 
 

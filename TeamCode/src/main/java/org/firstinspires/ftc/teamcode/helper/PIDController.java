@@ -27,13 +27,11 @@ public class PIDController
      * @param Ki the integral coefficient
      * @param Kd the derivative coefficient
      */
-    public PIDController(double Kp, double Ki, double Kd)
-    {
+    public PIDController(double Kp, double Ki, double Kd) {
         m_P = Kp;
         m_I = Ki;
         m_D = Kd;
     }
-
     /**
      * Read the input, calculate the output accordingly, and write to the output.
      * This should only be called by the PIDTask
