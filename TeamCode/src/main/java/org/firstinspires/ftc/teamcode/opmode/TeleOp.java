@@ -23,11 +23,14 @@ public class TeleOp extends LinearOpMode {
     DcMotor pivot;
     DcMotor intake;
     Servo arm;
+    Servo dump;
+
     BNO055IMU imu;
     double position;
     boolean slowMode;
     boolean intakeOn;
     boolean extakeOn;
+    boolean dumpPressed;
     ElapsedTime left_bumper = new ElapsedTime();
     ElapsedTime right_bumper = new ElapsedTime();
     public void initialize(){
@@ -55,6 +58,11 @@ public class TeleOp extends LinearOpMode {
         arm = hardwareMap.get(Servo.class, "arm");
         arm.setPosition(0);
 
+        dump = hardwareMap.get(Servo.class, "dump");
+        dump.setPosition(0.2);
+
+
+
         //FORWARD,FORWAD, REVERSE, REVERSE (FORWARD/BACK WAS GOOD AND TURNS/STRAFES WERE FLIPPED)
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -68,6 +76,7 @@ public class TeleOp extends LinearOpMode {
 
         intakeOn = false;
         extakeOn = false;
+        dumpPressed = false;
 
     }
 
@@ -81,6 +90,8 @@ public class TeleOp extends LinearOpMode {
         public void run() {
             try {
                 while (!isInterrupted()) {
+
+
 
                     if (gamepad1.dpad_up) {
                         position=0.1;
@@ -103,6 +114,28 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
+                    if (gamepad2.left_bumper) {
+                        dump.setPosition(0.5);
+                        try{
+                            sleep(1000);
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+                    if (gamepad2.right_bumper) {
+                        dump.setPosition(0.6);
+                        try{
+                            sleep(1000);
+
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+
+
                     if (gamepad1.dpad_down) {
                         position=0.9;
                         arm.setPosition(position);
@@ -124,6 +157,7 @@ public class TeleOp extends LinearOpMode {
 
                     telemetry.addData("arm pos: ", position);
                     telemetry.update();
+
 
                     if(gamepad1.b){
                         pivot.setTargetPosition(625);
@@ -172,7 +206,35 @@ public class TeleOp extends LinearOpMode {
                         pivot.setPower(0);
                     }
 
-                    if(gamepad2.right_bumper && right_bumper.seconds()>0.25){
+                  /*  if(gamepad2.left_bumper & left_bumper.seconds()>0.25) {
+                        left_bumper.reset();
+                        if(!dumpPressed) {
+                            dump.setPosition(0.8);
+                            try {
+                                sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                            dumpPressed = true;
+                        }
+
+
+                        else {
+                            dump.setPosition(0.6);
+                            try {
+                                sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                            dumpPressed = false;
+
+                        }
+                    }
+
+                   */
+
+
+                    if(gamepad1.right_bumper && right_bumper.seconds()>0.25){
                         right_bumper.reset();
                         if(!intakeOn){
                             intake.setPower(0.7);
@@ -185,6 +247,7 @@ public class TeleOp extends LinearOpMode {
                             extakeOn=false;
                         }
                     }
+
 
                     if(gamepad1.left_bumper && left_bumper.seconds()>0.25){
                         left_bumper.reset();

@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name="AUTO ALL", group="auto")
+//@Autonomous(name="AUTO ALL", group="auto")
 public class AutoAll extends LinearOpMode {
 
     private enum State {
@@ -145,10 +145,19 @@ public class AutoAll extends LinearOpMode {
                 telemetry.addData("FAR", red);
                 telemetry.update();
             }
+
+            if (gamepad1.a){
+                telemetry.addData("COLOR: ", (blue == true)? "blue" : "red");
+                telemetry.addData("ROUTE: ", (near == true)? "near" : "far");
+                telemetry.addLine("Press 'y' To Confirm!");
+                telemetry.update();
+            }
+
             if(gamepad1.y){
                 completeConfig = true;
-                telemetry.addLine("Press y to Confirm!");
+                telemetry.addLine("CONFIRMED");
                 telemetry.update();
+                break;
             }
         }
 
