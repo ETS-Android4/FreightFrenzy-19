@@ -31,8 +31,9 @@ public class AutoAllUpdated extends LinearOpMode {
     ElapsedTime dpad_down = new ElapsedTime();
     ElapsedTime b = new ElapsedTime();
     ElapsedTime x = new ElapsedTime();
+    Servo dumperServo;
     //DcMotor intake;
-    //DcMotor pivot;
+    DcMotor pivot;
     //Servo arm;
     OpenCvCamera webcam;
 
@@ -181,8 +182,8 @@ public class AutoAllUpdated extends LinearOpMode {
             backRight = hardwareMap.get(DcMotor.class, "backRight");
             //intake = hardwareMap.get(DcMotor.class, "intake");
             //carousel = hardwareMap.get(DcMotor.class, "carousel");
-            //dumperServo = hardwareMap.get(Servo.class, "dumperServo");
-
+            dumperServo = hardwareMap.get(Servo.class, "dumperServo");
+            dumperServo.setPosition(1);
 
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -210,6 +211,14 @@ public class AutoAllUpdated extends LinearOpMode {
                 navigate.navigate(35, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
                 navigate.navigate(10, Constants2022.Direction.LEFT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                try {
+                    sleep(3000);
+                } catch (Exception e) {
+
+                }
+
+                Placing();
 
                 navigate.navigate(-36, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
 
