@@ -32,9 +32,10 @@ public class AutoAllUpdated extends LinearOpMode {
     ElapsedTime b = new ElapsedTime();
     ElapsedTime x = new ElapsedTime();
     Servo dumperServo;
-    //DcMotor intake;
+    DcMotor intake;
+    DcMotor carousel;
     DcMotor pivot;
-    //Servo arm;
+    Servo arm;
     OpenCvCamera webcam;
 
     /*final double dumperDump = 0.35;
@@ -99,31 +100,31 @@ public class AutoAllUpdated extends LinearOpMode {
     public void initialize() {
 
         while (!completeConfig) {
-            if (gamepad1.b && b.seconds()>0.25) {
+            if (gamepad2.b && b.seconds()>0.25) {
                 b.reset();
                 red = true;
                 telemetry.addData("RED", red);
                 telemetry.update();
             }
-            if (gamepad1.x && x.seconds()>0.25) {
+            if (gamepad2.x && x.seconds()>0.25) {
                 x.reset();
                 red = false;
                 telemetry.addData("RED", red);
                 telemetry.update();
             }
-            if (gamepad1.dpad_up && dpad_up.seconds()>0.25) {
+            if (gamepad2.dpad_up && dpad_up.seconds()>0.25) {
                 dpad_up.reset();
                 near = false;
                 telemetry.addData("NEAR", near);
                 telemetry.update();
             }
-            if (gamepad1.dpad_down && dpad_down.seconds()>0.25) {
+            if (gamepad2.dpad_down && dpad_down.seconds()>0.25) {
                 dpad_down.reset();
                 near = true;
                 telemetry.addData("NEAR", near);
                 telemetry.update();
             }
-            if (gamepad1.y) {
+            if (gamepad2.y) {
                 completeConfig = true;
                 telemetry.addLine("Press y to Confirm!");
                 telemetry.update();
@@ -180,15 +181,20 @@ public class AutoAllUpdated extends LinearOpMode {
             frontRight = hardwareMap.get(DcMotor.class, "frontRight");
             backLeft = hardwareMap.get(DcMotor.class, "backLeft");
             backRight = hardwareMap.get(DcMotor.class, "backRight");
-            //intake = hardwareMap.get(DcMotor.class, "intake");
-            //carousel = hardwareMap.get(DcMotor.class, "carousel");
+            intake = hardwareMap.get(DcMotor.class, "intake");
+            carousel = hardwareMap.get(DcMotor.class, "alexCarushow");
             dumperServo = hardwareMap.get(Servo.class, "dumperServo");
-            dumperServo.setPosition(1);
-
+            pivot = hardwareMap.get(DcMotor.class, "pivot");
+            dumperServo.setPosition(0.7);
+            pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            pivot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            pivot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
             backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+            arm = hardwareMap.get(Servo.class, "arm");
 
 
 
@@ -207,30 +213,72 @@ public class AutoAllUpdated extends LinearOpMode {
                 backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
  */
-
-                navigate.navigate(35, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
-
-                navigate.navigate(10, Constants2022.Direction.LEFT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
-
+                navigate.navigate(28, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
                 try {
-                    sleep(3000);
-                } catch (Exception e) {
-
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
+
+                navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+
+
+                double distanceF = 19;
+                if(position== DetectionHelper.DuckPosition.LEFT){
+                    distanceF = 17;
+                }
+                else if(position == DetectionHelper.DuckPosition.CENTER){
+                    distanceF = 14;
+                }
+                else if(position == DetectionHelper.DuckPosition.RIGHT){
+                    distanceF = 14.5;
+                }
+
+                navigate.navigate(distanceF, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
 
                 Placing();
 
-                navigate.navigate(-36, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+                navigate.navigate(-21, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
 
                 navigate.navigate(0, Constants2022.Direction.TURN, -85, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
                 navigate.navigate(7, Constants2022.Direction.RIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
-                navigate.navigate(35, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                navigate.navigate(70, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
             }
-            else{
 
+            else {
+                navigate.navigate(0, Constants2022.Direction.TURN,-90, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(2, Constants2022.Direction.RIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(-18, Constants2022.Direction.STRAIGHT,0, -0.2,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                Carousel();
+
+                navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+
+                navigate.navigate(39, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(-21, Constants2022.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                navigate.navigate(27, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                Placing();
+
+                navigate.navigate(-29, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                navigate.navigate(14, Constants2022.Direction.RIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
 
             }
@@ -259,9 +307,62 @@ public class AutoAllUpdated extends LinearOpMode {
 
     public void Carousel(){
 
+        spinTime.reset();
+        while (spinTime.seconds() < 2.8) {
+            carousel.setPower(-0.3);
+
+        }
+        carousel.setPower(0);
+
     }
 
     public void Placing(){
+        double positionArm;
+        double outtakeSpeed = -0.3;
+        if(position== DetectionHelper.DuckPosition.RIGHT){
+             positionArm=0.15;
+            arm.setPosition(positionArm);
+            try {
+                sleep(1000);
+            } catch (Exception e) {;
+
+            }
+        }
+        else if(position == DetectionHelper.DuckPosition.CENTER){
+             positionArm=0.3;
+            arm.setPosition(positionArm);
+            try {
+                sleep(1000);
+            } catch (Exception e) {;
+
+            }
+        }
+        else{
+            outtakeSpeed = -0.3;
+            positionArm=0.63;
+            arm.setPosition(positionArm);
+            try {
+                sleep(1000);
+            } catch (Exception e) {;
+
+            }
+        }
+
+        intake.setPower(outtakeSpeed);
+        try {
+            sleep(2500);
+        } catch (Exception e) {
+
+        }
+        intake.setPower(0);
+
+        positionArm=0.7;
+        arm.setPosition(positionArm);
+        try {
+            sleep(1000);
+        } catch (Exception e) {;
+
+        }
 
     }
 

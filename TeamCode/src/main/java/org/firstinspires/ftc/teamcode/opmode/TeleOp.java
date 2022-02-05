@@ -29,6 +29,7 @@ public class TeleOp extends LinearOpMode {
 
     BNO055IMU imu;
     double position;
+    double rotatePosition = 0;
     boolean slowMode;
     boolean intakeOn;
     boolean extakeOn;
@@ -88,10 +89,10 @@ public class TeleOp extends LinearOpMode {
         //frontleft
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeOn = false;
         extakeOn = false;
@@ -223,6 +224,7 @@ public class TeleOp extends LinearOpMode {
 
                     if(gamepad1.b){
                         pivot.setTargetPosition(625);
+                        rotatePosition = 625;
                         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         int movement = Math.abs(pivot.getCurrentPosition()-625);
                         while(pivot.isBusy()){
@@ -233,6 +235,7 @@ public class TeleOp extends LinearOpMode {
                     }
                     if(gamepad1.y){
                         pivot.setTargetPosition(1400);
+                        rotatePosition = 1400;
                         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         while(pivot.isBusy()){
                             pivot.setPower(0.7);
@@ -243,6 +246,7 @@ public class TeleOp extends LinearOpMode {
 
                     if(gamepad1.x){
                         pivot.setTargetPosition(-625);
+                        rotatePosition = -625;
                         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         int movement = Math.abs(pivot.getCurrentPosition()+625);
                         while(pivot.isBusy()){
@@ -255,6 +259,7 @@ public class TeleOp extends LinearOpMode {
                     if(gamepad1.a){
                         int turn = pivot.getCurrentPosition();
                         pivot.setTargetPosition(0);
+                        rotatePosition = 0;
                         pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         while(pivot.isBusy()){
                             if(turn>0){
@@ -339,7 +344,6 @@ public class TeleOp extends LinearOpMode {
 
 
 
-    double positionArm = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -353,6 +357,10 @@ public class TeleOp extends LinearOpMode {
 
             if(gamepad2.dpad_down){
                 slowMode=true;
+            }
+            if(gamepad2.dpad_up){
+                slowMode=false;
+
             }
 
             if (slowMode) {

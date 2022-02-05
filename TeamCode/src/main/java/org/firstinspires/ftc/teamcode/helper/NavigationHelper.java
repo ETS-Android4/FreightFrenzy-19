@@ -233,9 +233,9 @@ public class NavigationHelper {
         pFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        pFrontRight.setPower((1.3)*(pSpeed));
+        pFrontRight.setPower((pSpeed));
         pBackRight.setPower(-(pSpeed));
-        pFrontLeft.setPower(-(1.3)*(pSpeed));
+        pFrontLeft.setPower(-(pSpeed));
         pBackLeft.setPower((pSpeed));
 
         telemetry.addData("Path1", "Target Position %7d :%7d", newTargetPositionBackLeft, newTargetPositionBackRight, newTargetPositionFrontLeft, newTargetPositionFrontRight);
@@ -352,7 +352,6 @@ public class NavigationHelper {
                 pFrontRight.getCurrentPosition());
         telemetry.update();
 
-        this.strafeCorrection(pBackLeft, pBackRight, pFrontRight, pFrontLeft, pImu, telemetry, startingAngle);
 
 
     }
