@@ -24,17 +24,17 @@ public class TeleOp extends LinearOpMode {
     DcMotor intake;
     Servo dumperServo;
     Servo arm;
-    Servo dump;
     Servo cap;
 
     BNO055IMU imu;
     double position;
-    double rotatePosition = 0;
+    int rotatePosition = 0;
     boolean slowMode;
     boolean intakeOn;
     boolean extakeOn;
     boolean boxUp;
     boolean dumpPressed;
+    boolean capUp;
     boolean carouselTurn = false;
     ElapsedTime left_bumper = new ElapsedTime();
     ElapsedTime left_bumper_2 = new ElapsedTime();
@@ -42,6 +42,11 @@ public class TeleOp extends LinearOpMode {
     ElapsedTime right_bumper_time2 = new ElapsedTime();
     ElapsedTime b_time = new ElapsedTime();
     ElapsedTime x_time = new ElapsedTime();
+    ElapsedTime y_time = new ElapsedTime();
+    ElapsedTime back_time = new ElapsedTime();
+
+    int i = 1;
+
     public void initialize(){
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -98,6 +103,7 @@ public class TeleOp extends LinearOpMode {
         extakeOn = false;
         dumpPressed = false;
         boxUp = false;
+        capUp = false;
 
     }
 
@@ -112,7 +118,7 @@ public class TeleOp extends LinearOpMode {
             try {
                 while (!isInterrupted()) {
 
-
+                    //carousel
                     if(gamepad2.b && b_time.seconds()>0.25){
                         b_time.reset();
                         if(!carouselTurn){
@@ -125,6 +131,8 @@ public class TeleOp extends LinearOpMode {
                         }
 
                     }
+
+                    //carousel other direction
                     if(gamepad2.x && x_time.seconds()>0.25){
                         x_time.reset();
                         if(!carouselTurn){
@@ -137,10 +145,9 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
-
-
+                    //up position arm
                     if (gamepad1.dpad_up) {
-                        position=0.15;
+                        position=0.1;
                         arm.setPosition(position);
                         try {
                             sleep(1000);
@@ -149,6 +156,7 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
+                    //intake position arm
                     if(gamepad1.dpad_right) {
                         position = 1;
                         arm.setPosition(position);
@@ -160,11 +168,29 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
-                    if (gamepad2.left_bumper && left_bumper_2.seconds()>0.25) {
-                        left_bumper_2.reset();
-                        dump.setPosition(0.5);
+                    //low position arm
+                    if (gamepad1.dpad_down) {
+                        position=0.8;
+                        arm.setPosition(position);
+                        try {
+                            sleep(1000);
+                        } catch (Exception e) {
+
+                        }
                     }
 
+                    //middle position arm
+                    if(gamepad1.dpad_left){
+                        position = 0.3;
+                        arm.setPosition(position);
+                        try{
+                            sleep(1000);
+                        } catch (Exception e){
+
+                        }
+                    }
+
+                    //intake
                     if (gamepad2.right_bumper && right_bumper_time2.seconds()>0.25) {
                         right_bumper_time2.reset();
                         intake.setPower(0.6);
@@ -176,7 +202,7 @@ public class TeleOp extends LinearOpMode {
                         else{
                             dumperServo.setPosition(0.7);
                             try {
-                                sleep(150);
+                                sleep(200);
                             } catch (Exception e) {
 
                             }
@@ -186,6 +212,19 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
+                    if(gamepad2.y&&y_time.seconds()>0.25){
+                        y_time.reset();
+                        if(capUp==false){
+                            cap.setPosition(0.3);
+                            capUp = true;
+                        }
+                        else{
+                            cap.setPosition(0.7);
+                            capUp=false;
+                        }
+                    }
+
+                    //box up and down
                     if(gamepad1.right_bumper && right_bumper_time.seconds()>0.25){
                         right_bumper_time.reset();
                         if (boxUp==false){
@@ -198,82 +237,7 @@ public class TeleOp extends LinearOpMode {
                         }
                     }
 
-
-
-                    if (gamepad1.dpad_down) {
-                        position=0.9;
-                        arm.setPosition(position);
-                        try {
-                            sleep(1000);
-                        } catch (Exception e) {
-
-                        }
-                    }
-                    if(gamepad1.dpad_left){
-                        position = 0.3;
-                        arm.setPosition(position);
-                        try{
-                            sleep(1000);
-                        } catch (Exception e){
-
-                        }
-                    }
-
-                    telemetry.addData("outtake", extakeOn);
-                    telemetry.update();
-
-                    if(gamepad1.b){
-                        pivot.setTargetPosition(625);
-                        rotatePosition = 625;
-                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        int movement = Math.abs(pivot.getCurrentPosition()-625);
-                        while(pivot.isBusy()){
-                            int fraction = Math.abs((pivot.getCurrentPosition()-625)/movement);
-                            pivot.setPower(fraction*0.3+0.6);
-                        }
-                        pivot.setPower(0);
-                    }
-                    if(gamepad1.y){
-                        pivot.setTargetPosition(1400);
-                        rotatePosition = 1400;
-                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        while(pivot.isBusy()){
-                            pivot.setPower(0.7);
-
-                        }
-                        pivot.setPower(0);
-                    }
-
-                    if(gamepad1.x){
-                        pivot.setTargetPosition(-625);
-                        rotatePosition = -625;
-                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        int movement = Math.abs(pivot.getCurrentPosition()+625);
-                        while(pivot.isBusy()){
-                            int fraction = Math.abs((pivot.getCurrentPosition()+625)/movement);
-                            pivot.setPower(fraction*-0.3+0.6);
-                        }
-                        pivot.setPower(0);
-                    }
-
-                    if(gamepad1.a){
-                        int turn = pivot.getCurrentPosition();
-                        pivot.setTargetPosition(0);
-                        rotatePosition = 0;
-                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        while(pivot.isBusy()){
-                            if(turn>0){
-                                pivot.setPower(-0.7);
-                            }
-                            else{
-                                pivot.setPower(0.7);
-                            }
-
-                        }
-                        pivot.setPower(0);
-                    }
-
-
+                    //outtake
                     if(gamepad1.left_bumper && left_bumper.seconds()>0.25){
                         left_bumper.reset();
                         if(!extakeOn){
@@ -287,7 +251,215 @@ public class TeleOp extends LinearOpMode {
                             intakeOn=false;
                         }
                     }
+
+                    //right position pivot
+                    if(gamepad1.b){
+                        pivot.setTargetPosition(625);
+                        rotatePosition = 625;
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        //int movement = Math.abs(pivot.getCurrentPosition()-625);
+                        while(pivot.isBusy()){
+                            //int fraction = Math.abs((pivot.getCurrentPosition()-625)/movement);
+                            pivot.setPower(0.5);
+                        }
+                        pivot.setPower(0);
+                    }
+
+                    //back position pivot
+                    if(gamepad1.y){
+                        pivot.setTargetPosition(1400);
+                        rotatePosition = 1400;
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(pivot.isBusy()){
+                            pivot.setPower(0.5);
+
+                        }
+                        pivot.setPower(0);
+                    }
+
+                    //left position pivot
+                    if(gamepad1.x){
+                        pivot.setTargetPosition(-625);
+                        rotatePosition = -625;
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        //int movement = Math.abs(pivot.getCurrentPosition()+625);
+                        while(pivot.isBusy()){
+                            //int fraction = Math.abs((pivot.getCurrentPosition()+625)/movement);
+                            pivot.setPower(-0.5);
+                        }
+                        pivot.setPower(0);
+                    }
+
+                    //neutral position pivot
+                    if(gamepad1.a){
+                        int turn = pivot.getCurrentPosition();
+                        pivot.setTargetPosition(0);
+                        rotatePosition = 0;
+                        pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        while(pivot.isBusy()){
+                            if(turn>0){
+                                pivot.setPower(-0.5);
+                            }
+                            else{
+                                pivot.setPower(0.5);
+                            }
+
+                        }
+                        pivot.setPower(0);
+                    }
+
+                    if(gamepad1.left_trigger>0.2){
+                        if(i==1){
+                            position = 0.3;
+                            arm.setPosition(position);
+                            try{
+                                sleep(1000);
+                            } catch (Exception e){
+
+                            }
+                            pivot.setTargetPosition(625);
+                            rotatePosition = 625;
+                            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            int movement = Math.abs(pivot.getCurrentPosition()-625);
+                            while(pivot.isBusy()){
+                                int fraction = Math.abs((pivot.getCurrentPosition()-625)/movement);
+                                pivot.setPower(0.3);
+                            }
+                            pivot.setPower(0);
+                            position=0.6;
+                            arm.setPosition(position);
+                            try {
+                                sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                            i=0;
+                        }
+                        if(i==2){
+                            position = 0.3;
+                            arm.setPosition(position);
+                            try{
+                                sleep(1000);
+                            } catch (Exception e){
+
+                            }
+                            pivot.setTargetPosition(0);
+                            rotatePosition = 0;
+                            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            int movement = Math.abs(pivot.getCurrentPosition()-0);
+                            while(pivot.isBusy()){
+                                int fraction = Math.abs((pivot.getCurrentPosition()-0)/movement);
+                                pivot.setPower(0.3);
+                            }
+                            pivot.setPower(0);
+                            dumperServo.setPosition(0.6);
+                            boxUp = false;
+                            try{
+                                sleep(500);
+
+                            } catch (Exception e) {
+
+                            }
+                            position = 1;
+                            arm.setPosition(position);
+                            try{
+                                sleep(1000);
+
+                            } catch (Exception e) {
+
+                            }
+                            i = 1;
+
+                        }
+                    }
+
+                    if(gamepad1.right_trigger>0.2){
+                        if(i==1){
+                            position = 0.3;
+                            arm.setPosition(position);
+                            try{
+                                sleep(1000);
+                            } catch (Exception e){
+
+                            }
+                            pivot.setTargetPosition(-625);
+                            rotatePosition = -625;
+                            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            int movement = Math.abs(pivot.getCurrentPosition()+625);
+                            while(pivot.isBusy()){
+                                int fraction = Math.abs((pivot.getCurrentPosition()+625)/movement);
+                                pivot.setPower(-0.3);
+                            }
+                            pivot.setPower(0);
+                            position=0.6;
+                            arm.setPosition(position);
+                            try {
+                                sleep(1000);
+                            } catch (Exception e) {
+
+                            }
+                            i=2;
+                        }
+                        else if(i==0){
+                            position = 0.3;
+                            arm.setPosition(position);
+                            try{
+                                sleep(1000);
+                            } catch (Exception e){
+
+                            }
+
+                            pivot.setTargetPosition(0);
+                            rotatePosition = 0;
+                            pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            int movement = Math.abs(pivot.getCurrentPosition());
+                            while(pivot.isBusy()){
+                                int fraction = Math.abs((pivot.getCurrentPosition())/movement);
+                                pivot.setPower(-0.3);
+                            }
+                            pivot.setPower(0);
+                            dumperServo.setPosition(0.6);
+                            boxUp = false;
+                            try{
+                                sleep(500);
+
+                            } catch (Exception e) {
+
+                            }
+                            position = 1;
+                            arm.setPosition(position);
+                            try{
+                                sleep(1000);
+
+                            } catch (Exception e) {
+
+                            }
+                            i = 1;
+                        }
+                    }
+
+                    if(gamepad1.back && back_time.seconds()>0.25){
+                        back_time.reset();
+                        dumperServo.setPosition(0.2
+                        );
+                    }
+
+                    pivot.setTargetPosition(rotatePosition);
+                    int diff = rotatePosition-pivot.getCurrentPosition();
+                    if(diff>20){
+                        pivot.setPower(0.1);
+                    }
+                    else if(diff < -20){
+                        pivot.setPower(-0.1);
+                    }
+                    else{
+                        pivot.setPower(0);
+                    }
+
+
                 }
+
+
                     idle();
             } catch (Exception e) {
 

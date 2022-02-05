@@ -206,13 +206,6 @@ public class AutoAllUpdated extends LinearOpMode {
 
             if (near) {
 
-/*
-                frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
- */
                 navigate.navigate(28, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
                 try {
                     Thread.sleep(500);
@@ -265,20 +258,35 @@ public class AutoAllUpdated extends LinearOpMode {
 
                 Carousel();
 
+                navigate.navigate(5, Constants2022.Direction.LEFT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+
                 navigate.navigate(-10, Constants2022.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
 
 
-                navigate.navigate(39, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                navigate.navigate(35, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
                 navigate.navigate(-21, Constants2022.Direction.STRAIGHT,0, -0.7,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
 
-                navigate.navigate(27, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                double distanceF = 28;
+
+                if(position== DetectionHelper.DuckPosition.CENTER){
+                    distanceF = 27;
+                }
+
+                if(position== DetectionHelper.DuckPosition.RIGHT){
+                    distanceF = 29;
+
+                }
+
+                navigate.navigate(distanceF, Constants2022.Direction.STRAIGHT,0, 0.4,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
                 Placing();
 
+
                 navigate.navigate(-29, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
 
-                navigate.navigate(14, Constants2022.Direction.RIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                navigate.navigate(13, Constants2022.Direction.RIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
 
 
             }
@@ -290,10 +298,97 @@ public class AutoAllUpdated extends LinearOpMode {
 
             if(near) {
 
+                navigate.navigate(27, Constants2022.Direction.RIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                navigate.navigate(-5, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+
+
+                double distanceF = 17;
+                if(position== DetectionHelper.DuckPosition.LEFT){
+                    distanceF = 15;
+                }
+                else if(position == DetectionHelper.DuckPosition.CENTER){
+                    distanceF = 15;
+                }
+                else if(position == DetectionHelper.DuckPosition.RIGHT){
+                    distanceF = 14.5;
+                }
+
+                navigate.navigate(distanceF, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                Placing();
+
+                navigate.navigate(-21, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                navigate.navigate(0, Constants2022.Direction.TURN, 85, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(7, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(60, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
 
 
             }
             else{
+
+                navigate.navigate(15, Constants2022.Direction.STRAIGHT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(35, Constants2022.Direction.RIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(-2.5, Constants2022.Direction.STRAIGHT,0, -0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                Carousel();
+
+
+
+                navigate.navigate(30, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(0, Constants2022.Direction.TURN, 90, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+                navigate.navigate(-5, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                int forwardAmount = 25;
+                if(position == DetectionHelper.DuckPosition.RIGHT){
+                    forwardAmount = 28;
+                }
+
+                navigate.navigate(forwardAmount, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+
+               /* double distanceF = 28;
+
+                if(position== DetectionHelper.DuckPosition.CENTER){
+                    distanceF = 27;
+                }
+
+                if(position== DetectionHelper.DuckPosition.RIGHT){
+                    distanceF = 29;
+
+                }
+
+                navigate.navigate(distanceF, Constants2022.Direction.STRAIGHT,0, 0.4,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);*/
+
+                Placing();
+
+
+                navigate.navigate(-40, Constants2022.Direction.STRAIGHT,0, -0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, false);
+
+                navigate.navigate(17, Constants2022.Direction.LEFT,0, 0.3,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
+
+
 
 
 
@@ -309,7 +404,12 @@ public class AutoAllUpdated extends LinearOpMode {
 
         spinTime.reset();
         while (spinTime.seconds() < 2.8) {
-            carousel.setPower(-0.3);
+            if(red){
+                carousel.setPower(-0.3);
+            }
+            if(!red){
+                carousel.setPower(0.3);
+            }
 
         }
         carousel.setPower(0);
@@ -319,13 +419,24 @@ public class AutoAllUpdated extends LinearOpMode {
     public void Placing(){
         double positionArm;
         double outtakeSpeed = -0.3;
+        if(position== DetectionHelper.DuckPosition.CENTER && !red && !near){
+            outtakeSpeed = -0.25;
+        }
         if(position== DetectionHelper.DuckPosition.RIGHT){
-             positionArm=0.15;
+            if(!red && near){
+                positionArm=0.1;
+            }
+            else{
+                positionArm=0.15;
+            }
             arm.setPosition(positionArm);
             try {
                 sleep(1000);
             } catch (Exception e) {;
 
+            }
+            if(red && !near){
+                navigate.navigate(4, Constants2022.Direction.STRAIGHT,0, 0.5,backLeft,backRight,frontRight,frontLeft,imu, telemetry, true);
             }
         }
         else if(position == DetectionHelper.DuckPosition.CENTER){
